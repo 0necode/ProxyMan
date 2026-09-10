@@ -375,20 +375,24 @@ WantedBy=multi-user.target
 
 // ProxyConfigData 代理配置参数
 // ProxyConfigData 代理配置参数
+// ProxyConfigData 代理配置参数
+// ProxyConfigData 代理配置参数
 type ProxyConfigData struct {
-	Protocol   string
-	ServerAddr string
-	ServerPort int
-	UUID       string
-	Password   string
-	Cipher     string
-	SNI        string
-	Network    string
-	LogLevel   string
-	PublicKey  string  // Reality 协议
-	ShortId    string  // Reality 协议
-	SpiderX    string  // Reality 协议
-	GRPCService string // gRPC 协议
+	Protocol    string
+	ServerAddr  string
+	ServerPort  int
+	UUID        string
+	Password    string
+	Cipher      string
+	SNI         string
+	Network     string
+	LogLevel    string
+	PublicKey   string  // Reality 协议
+	ShortId     string  // Reality 协议
+	SpiderX     string  // Reality 协议
+	GRPCService string  // gRPC 协议
+	WSPATH      string  // WebSocket 协议
+	Flow        string  // VLess XTLS flow
 }
 
 // WriteXrayConfig 根据协议生成 Xray 配置
@@ -426,6 +430,14 @@ func WriteXrayConfig(engineDir string, logLevel string, protocol string, data *P
 		configTemplate = XrayShadowsocks2022Config
 	case "anytls":
 		configTemplate = XrayAnyTLSConfig
+	case "vless-xtls", "xtls":
+		configTemplate = XrayVLessXTLSConfig
+	case "trojan-ws", "trojan-websocket":
+		configTemplate = XrayTrojanWSConfig
+	case "vless-ws", "vless-websocket":
+		configTemplate = XrayVLessWSConfig
+	case "vmess-ws", "vmess-websocket":
+		configTemplate = XrayVMessWSConfig
 	default:
 		configTemplate = XrayVMessConfig
 	}
@@ -818,3 +830,97 @@ rules:
   - GEOIP,private,DIRECT,no-resolve
   - MATCH,Proxy
 `
+
+// ==================== 更多协议模板 ====================
+
+// XrayVLessXTLSConfig 支持 VLess+XTLS 高性能传输
+const XrayVLessXTLSConfig = `{
+  "log": {"loglevel": "{{.LogLevel}}"},
+  "inbounds": [
+    {"tag":"http-in","port":10809,"protocol":"http","listen":"127.0.0.1","settings":{}},
+    {"tag":"socks-in","port":10808,"protocol":"socks","listen":"127.0.0.1","settings":{"udp":true}}
+  ],
+  "outbounds": [
+    {
+      "tag":"proxy","protocol":"vless",
+      "settings":{"vnext":[{"address":"{{.ServerAddr}}","port":{{.ServerPort}},"users":[{"id":"{{.UUID}}","encryption":"none","flow":"xtls-rprx-direct"}]}]},
+      "streamSettings":{"network":"tcp","security":"xtls","xtlsSettings":{"serverName":"{{.SNI}}","fingerprint":"chrome"}}
+    },
+    {"tag":"direct","protocol":"freedom","settings":{}},
+    {"tag":"block","protocol":"blackhole","settings":{}}
+  ],
+  "routing":{"domainStrategy":"IPIfNonMatch","rules":[
+    {"type":"field","ip":["geoip:cn","geoip:private"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:cn"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:geolocation-!cn"],"outboundTag":"proxy"}
+  ]}
+}`
+
+// XrayTrojanWSConfig 支持 Trojan+WebSocket 传输
+const XrayTrojanWSConfig = `{
+  "log": {"loglevel": "{{.LogLevel}}"},
+  "inbounds": [
+    {"tag":"http-in","port":10809,"protocol":"http","listen":"127.0.0.1","settings":{}},
+    {"tag":"socks-in","port":10808,"protocol":"socks","listen":"127.0.0.1","settings":{"udp":true}}
+  ],
+  "outbounds": [
+    {
+      "tag":"proxy","protocol":"trojan",
+      "settings":{"servers":[{"address":"{{.ServerAddr}}","port":{{.ServerPort}},"password":"{{.Password}}"}]},
+      "streamSettings":{"network":"ws","security":"tls","tlsSettings":{"serverName":"{{.SNI}}"},"wsSettings":{"path":"{{.WSPATH}}","headers":{"Host":"{{.SNI}}"}}}
+    },
+    {"tag":"direct","protocol":"freedom","settings":{}},
+    {"tag":"block","protocol":"blackhole","settings":{}}
+  ],
+  "routing":{"domainStrategy":"IPIfNonMatch","rules":[
+    {"type":"field","ip":["geoip:cn","geoip:private"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:cn"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:geolocation-!cn"],"outboundTag":"proxy"}
+  ]}
+}`
+
+// XrayVLessWSConfig 支持 VLess+WebSocket+TLS 传输
+const XrayVLessWSConfig = `{
+  "log": {"loglevel": "{{.LogLevel}}"},
+  "inbounds": [
+    {"tag":"http-in","port":10809,"protocol":"http","listen":"127.0.0.1","settings":{}},
+    {"tag":"socks-in","port":10808,"protocol":"socks","listen":"127.0.0.1","settings":{"udp":true}}
+  ],
+  "outbounds": [
+    {
+      "tag":"proxy","protocol":"vless",
+      "settings":{"vnext":[{"address":"{{.ServerAddr}}","port":{{.ServerPort}},"users":[{"id":"{{.UUID}}","encryption":"none"}]}]},
+      "streamSettings":{"network":"ws","security":"tls","tlsSettings":{"serverName":"{{.SNI}}"},"wsSettings":{"path":"{{.WSPATH}}","headers":{"Host":"{{.SNI}}"}}}
+    },
+    {"tag":"direct","protocol":"freedom","settings":{}},
+    {"tag":"block","protocol":"blackhole","settings":{}}
+  ],
+  "routing":{"domainStrategy":"IPIfNonMatch","rules":[
+    {"type":"field","ip":["geoip:cn","geoip:private"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:cn"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:geolocation-!cn"],"outboundTag":"proxy"}
+  ]}
+}`
+
+// XrayVMessWSConfig 支持 VMess+WebSocket+TLS 传输
+const XrayVMessWSConfig = `{
+  "log": {"loglevel": "{{.LogLevel}}"},
+  "inbounds": [
+    {"tag":"http-in","port":10809,"protocol":"http","listen":"127.0.0.1","settings":{}},
+    {"tag":"socks-in","port":10808,"protocol":"socks","listen":"127.0.0.1","settings":{"udp":true}}
+  ],
+  "outbounds": [
+    {
+      "tag":"proxy","protocol":"vmess",
+      "settings":{"vnext":[{"address":"{{.ServerAddr}}","port":{{.ServerPort}},"users":[{"id":"{{.UUID}}","alterId":0,"security":"auto"}]}]},
+      "streamSettings":{"network":"ws","security":"tls","tlsSettings":{"serverName":"{{.SNI}}"},"wsSettings":{"path":"{{.WSPATH}}","headers":{"Host":"{{.SNI}}"}}}
+    },
+    {"tag":"direct","protocol":"freedom","settings":{}},
+    {"tag":"block","protocol":"blackhole","settings":{}}
+  ],
+  "routing":{"domainStrategy":"IPIfNonMatch","rules":[
+    {"type":"field","ip":["geoip:cn","geoip:private"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:cn"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:geolocation-!cn"],"outboundTag":"proxy"}
+  ]}
+}`

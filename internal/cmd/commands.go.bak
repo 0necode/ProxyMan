@@ -12,28 +12,35 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// ==================== install ====================
+// installCmd represents the install command
 var installCmd = &cobra.Command{
 	Use:   "install [engine]",
 	Short: "Install a proxy engine (v2ray or clash)",
 	Long: `Install a proxy engine. Supported engines:
-  - v2ray/xray: Xray-core with full protocol support
-  - clash/mihomo: Mihomo (Clash Meta) with rule-based routing`,
+  - v2ray: V2Ray core with full protocol support
+  - clash: Clash core with rule-based routing`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		engineName := args[0]
 		fmt.Printf("Installing %s...\n", engineName)
+
+		// Initialize config
 		cfg := config.LoadConfig()
-		em := engine.NewManager(cfg)
+
+		// Create engine manager
+		_ = em
+
+		// Install engine
 		if err := em.Install(engineName); err != nil {
 			return fmt.Errorf("install failed: %w", err)
 		}
+
 		fmt.Printf("✓ %s installed successfully\n", engineName)
 		return nil
 	},
 }
 
-// ==================== uninstall ====================
+// uninstallCmd represents the uninstall command
 var uninstallCmd = &cobra.Command{
 	Use:   "uninstall [engine]",
 	Short: "Uninstall a proxy engine",
@@ -41,17 +48,20 @@ var uninstallCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		engineName := args[0]
 		fmt.Printf("Uninstalling %s...\n", engineName)
+
 		cfg := config.LoadConfig()
-		em := engine.NewManager(cfg)
+		_ = em
+
 		if err := em.Uninstall(engineName); err != nil {
 			return fmt.Errorf("uninstall failed: %w", err)
 		}
+
 		fmt.Printf("✓ %s uninstalled successfully\n", engineName)
 		return nil
 	},
 }
 
-// ==================== start ====================
+// startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start [engine] [config-file]",
 	Short: "Start a proxy engine with a configuration file",
@@ -59,21 +69,26 @@ var startCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		engineName := args[0]
 		cfgFile := args[1]
+
 		if _, err := os.Stat(cfgFile); os.IsNotExist(err) {
 			return fmt.Errorf("config file not found: %s", cfgFile)
 		}
+
 		fmt.Printf("Starting %s with %s...\n", engineName, filepath.Base(cfgFile))
+
 		cfg := config.LoadConfig()
-		em := engine.NewManager(cfg)
+		_ = em
+
 		if err := em.Start(engineName, cfgFile); err != nil {
 			return fmt.Errorf("start failed: %w", err)
 		}
+
 		fmt.Printf("✓ %s started successfully\n", engineName)
 		return nil
 	},
 }
 
-// ==================== stop ====================
+// stopCmd represents the stop command
 var stopCmd = &cobra.Command{
 	Use:   "stop [engine]",
 	Short: "Stop a running proxy engine",
@@ -81,27 +96,32 @@ var stopCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		engineName := args[0]
 		fmt.Printf("Stopping %s...\n", engineName)
+
 		cfg := config.LoadConfig()
-		em := engine.NewManager(cfg)
+		_ = em
+
 		if err := em.Stop(engineName); err != nil {
 			return fmt.Errorf("stop failed: %w", err)
 		}
+
 		fmt.Printf("✓ %s stopped successfully\n", engineName)
 		return nil
 	},
 }
 
-// ==================== status ====================
+// statusCmd represents the status command
 var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Show status of all proxy engines",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg := config.LoadConfig()
-		em := engine.NewManager(cfg)
+		_ = em
+
 		statuses, err := em.Status()
 		if err != nil {
 			return fmt.Errorf("status failed: %w", err)
 		}
+
 		fmt.Println("Proxy Engine Status:")
 		fmt.Println("====================")
 		for _, s := range statuses {
@@ -111,7 +131,7 @@ var statusCmd = &cobra.Command{
 	},
 }
 
-// ==================== config ====================
+// configCmd represents the config command
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Manage proxy-cli configuration",
@@ -124,9 +144,9 @@ var configShowCmd = &cobra.Command{
 		cfg := config.LoadConfig()
 		fmt.Println("Current Configuration:")
 		fmt.Println("=====================")
-		fmt.Printf("  Work Dir:     %s\n", cfg.WorkDir)
-		fmt.Printf("  Log Level:    %s\n", cfg.LogLevel)
-		fmt.Printf("  IPv6:         %v\n", cfg.IPv6)
+		fmt.Printf("  Work Dir:    %s\n", cfg.WorkDir)
+		fmt.Printf("  Log Level:   %s\n", cfg.LogLevel)
+		fmt.Printf("  IPv6:        %v\n", cfg.IPv6)
 		fmt.Printf("  System Proxy: %v\n", cfg.SystemProxy)
 		return nil
 	},
@@ -140,6 +160,7 @@ var configSetCmd = &cobra.Command{
 		key := args[0]
 		value := args[1]
 		cfg := config.LoadConfig()
+
 		switch key {
 		case "workdir":
 			cfg.WorkDir = value
@@ -152,9 +173,11 @@ var configSetCmd = &cobra.Command{
 		default:
 			return fmt.Errorf("unknown config key: %s", key)
 		}
+
 		if err := config.SaveConfig(cfg); err != nil {
 			return fmt.Errorf("save failed: %w", err)
 		}
+
 		fmt.Printf("✓ Set %s = %s\n", key, value)
 		return nil
 	},
@@ -167,16 +190,22 @@ var configEditCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		engineName := args[0]
 		cfg := config.LoadConfig()
-		em := engine.NewManager(cfg)
+		_ = em
+		
 		configPath := em.GetConfigPath(engineName)
 		if configPath == "" {
 			return fmt.Errorf("no config found for %s. Run 'proxy-cli install %s' first", engineName, engineName)
 		}
+		
 		editor := os.Getenv("EDITOR")
 		if editor == "" {
 			editor = "vi"
 		}
+		
 		fmt.Printf("Editing %s config: %s\n", engineName, configPath)
+		fmt.Printf("Using editor: %s\n", editor)
+		
+		// Open in editor
 		c := exec.Command(editor, configPath)
 		c.Stdin = os.Stdin
 		c.Stdout = os.Stdout
@@ -185,140 +214,7 @@ var configEditCmd = &cobra.Command{
 	},
 }
 
-// ==================== test ====================
-var testCmd = &cobra.Command{
-	Use:   "test [engine]",
-	Short: "Test proxy connection",
-	Args:  cobra.ExactArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		engineName := args[0]
-		cfg := config.LoadConfig()
-		em := engine.NewManager(cfg)
-		configPath := em.GetConfigPath(engineName)
-		if configPath == "" {
-			return fmt.Errorf("no config found for %s", engineName)
-		}
-		fmt.Printf("Testing %s connection...\n", engineName)
-		fmt.Printf("Config: %s\n", configPath)
-		engineDir := filepath.Join(cfg.WorkDir, "engines", engineName)
-		var binary string
-		switch engineName {
-		case "v2ray", "xray":
-			binary = filepath.Join(engineDir, "xray")
-		case "clash", "mihomo":
-			binary = filepath.Join(engineDir, "mihomo")
-		}
-		if _, err := os.Stat(binary); os.IsNotExist(err) {
-			return fmt.Errorf("engine binary not found: %s", binary)
-		}
-		fmt.Printf("✓ Binary: %s\n", binary)
-		fmt.Printf("✓ Config: %s\n", configPath)
-		fmt.Println("✓ Engine is ready to start")
-		return nil
-	},
-}
-
-// ==================== split ====================
-var splitCmd = &cobra.Command{
-	Use:   "split [engine] [mode]",
-	Short: "Configure traffic splitting (auto-split domestic/international)",
-	Long: `Configure automatic traffic splitting:
-  - full: All traffic goes through proxy (default)
-  - china-split: Domestic traffic direct, international through proxy`,
-	Args: cobra.ExactArgs(2),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		engineName := args[0]
-		mode := args[1]
-		if mode != "full" && mode != "china-split" {
-			return fmt.Errorf("invalid mode: %s (use 'full' or 'china-split')", mode)
-		}
-		cfg := config.LoadConfig()
-		engineDir := filepath.Join(cfg.WorkDir, "engines", engineName)
-		if _, err := os.Stat(engineDir); os.IsNotExist(err) {
-			return fmt.Errorf("%s is not installed", engineName)
-		}
-		var configPath string
-		var err error
-		switch engineName {
-		case "v2ray", "xray":
-			configPath, err = engine.WriteXrayConfig(engineDir, cfg.LogLevel, "vmess", nil)
-		case "clash", "mihomo":
-			configPath, err = engine.WriteMihomoConfig(engineDir, cfg.LogLevel, mode)
-		default:
-			return fmt.Errorf("unsupported engine: %s", engineName)
-		}
-		if err != nil {
-			return fmt.Errorf("generate config: %w", err)
-		}
-		fmt.Printf("✓ Config updated: %s\n", configPath)
-		fmt.Printf("✓ Mode: %s\n", mode)
-		if mode == "china-split" {
-			fmt.Println("  - Domestic traffic: DIRECT")
-			fmt.Println("  - International traffic: PROXY")
-		} else {
-			fmt.Println("  - All traffic: PROXY")
-		}
-		return nil
-	},
-}
-
-// ==================== import ====================
-var importCmd = &cobra.Command{
-	Use:   "import [link|subscription-url]",
-	Short: "Import proxy configuration from link or subscription URL",
-	Long: `Import proxy configuration from various sources:
-  - vmess:// links
-  - vless:// links
-  - trojan:// links
-  - ss:// links
-  - Subscription URLs (airport links)
-
-Examples:
-  proxy-cli import "vmess://eyJ2IjoiMiIs..."
-  proxy-cli import "vless://uuid@server:port?security=tls#name"
-  proxy-cli import "https://example.com/sub?token=xxx"`,
-	Args: cobra.ExactArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		input := args[0]
-		protocol := parser.DetectProtocol(input)
-
-		switch protocol {
-		case "subscription":
-			fmt.Println("检测到订阅链接，正在解析...")
-			sub, err := parser.ParseSubscription(input)
-			if err != nil {
-				return fmt.Errorf("解析订阅失败: %w", err)
-			}
-			fmt.Printf("✓ 解析成功，共 %d 个节点\n\n", sub.Count)
-			for i, node := range sub.Proxies {
-				fmt.Printf("  %d. [%s] %s → %s:%d\n", i+1, node.Type, node.Name, node.Server, node.Port)
-			}
-
-		case "vmess", "vless", "trojan", "shadowsocks":
-			fmt.Printf("检测到 %s 协议链接\n", protocol)
-			node, err := parser.ParseProxyLink(input)
-			if err != nil {
-				return fmt.Errorf("解析链接失败: %w", err)
-			}
-			fmt.Printf("✓ 解析成功\n")
-			fmt.Printf("  名称:   %s\n", node.Name)
-			fmt.Printf("  类型:   %s\n", node.Type)
-			fmt.Printf("  服务器: %s:%d\n", node.Server, node.Port)
-			if node.UUID != "" {
-				fmt.Printf("  UUID:   %s\n", node.UUID)
-			}
-			if node.SNI != "" {
-				fmt.Printf("  SNI:    %s\n", node.SNI)
-			}
-
-		default:
-			return fmt.Errorf("无法识别的输入格式: %s\n支持: vmess://, vless://, trojan://, ss://, 订阅链接", input)
-		}
-		return nil
-	},
-}
-
-// ==================== system-proxy ====================
+// systemProxyCmd represents the system-proxy command
 var systemProxyCmd = &cobra.Command{
 	Use:   "system-proxy [enable|disable|status]",
 	Short: "Manage system-wide proxy settings",
@@ -326,7 +222,9 @@ var systemProxyCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		action := args[0]
 		cfg := config.LoadConfig()
+
 		sp := config.NewSystemProxy(cfg)
+
 		switch action {
 		case "enable":
 			if err := sp.Enable(); err != nil {
@@ -359,14 +257,280 @@ func init() {
 	configCmd.AddCommand(configShowCmd)
 	configCmd.AddCommand(configSetCmd)
 	configCmd.AddCommand(configEditCmd)
-	rootCmd.AddCommand(installCmd)
-	rootCmd.AddCommand(uninstallCmd)
-	rootCmd.AddCommand(startCmd)
-	rootCmd.AddCommand(stopCmd)
-	rootCmd.AddCommand(statusCmd)
-	rootCmd.AddCommand(configCmd)
-	rootCmd.AddCommand(systemProxyCmd)
+}
+
+// testCmd represents the test command
+var testCmd = &cobra.Command{
+	Use:   "test [engine]",
+	Short: "Test proxy connection",
+	Args:  cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		engineName := args[0]
+		cfg := config.LoadConfig()
+		_ = em
+		
+		configPath := em.GetConfigPath(engineName)
+		if configPath == "" {
+			return fmt.Errorf("no config found for %s", engineName)
+		}
+		
+		fmt.Printf("Testing %s connection...\n", engineName)
+		fmt.Printf("Config: %s\n", configPath)
+		
+		// Test if engine binary exists
+		engineDir := filepath.Join(cfg.WorkDir, "engines", engineName)
+		var binary string
+		switch engineName {
+		case "v2ray", "xray":
+			binary = filepath.Join(engineDir, "xray")
+		case "clash", "mihomo":
+			binary = filepath.Join(engineDir, "mihomo")
+		}
+		
+		if _, err := os.Stat(binary); os.IsNotExist(err) {
+			return fmt.Errorf("engine binary not found: %s", binary)
+		}
+		
+		fmt.Printf("✓ Binary: %s\n", binary)
+		fmt.Printf("✓ Config: %s\n", configPath)
+		fmt.Println("✓ Engine is ready to start")
+		
+		return nil
+	},
+}
+
+// splitCmd represents the split command
+var splitCmd = &cobra.Command{
+	Use:   "split [engine] [mode]",
+	Short: "Configure traffic splitting (auto-split domestic/international)",
+	Long: `Configure automatic traffic splitting:
+  - full: All traffic goes through proxy (default)
+  - china-split: Domestic traffic direct, international through proxy`,
+	Args: cobra.ExactArgs(2),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		engineName := args[0]
+		mode := args[1]
+		
+		if mode != "full" && mode != "china-split" {
+			return fmt.Errorf("invalid mode: %s (use 'full' or 'china-split')", mode)
+		}
+		
+		cfg := config.LoadConfig()
+		_ = em
+		
+		engineDir := filepath.Join(cfg.WorkDir, "engines", engineName)
+		if _, err := os.Stat(engineDir); os.IsNotExist(err) {
+			return fmt.Errorf("%s is not installed", engineName)
+		}
+		
+		var configPath string
+		var err error
+		
+		switch engineName {
+		case "v2ray", "xray":
+			configPath, err = engine.WriteXrayConfig(engineDir, cfg.LogLevel, "vmess", nil)
+		case "clash", "mihomo":
+			configPath, err = engine.WriteMihomoConfig(engineDir, cfg.LogLevel, mode)
+		default:
+			return fmt.Errorf("unsupported engine: %s", engineName)
+		}
+		
+		if err != nil {
+			return fmt.Errorf("generate config: %w", err)
+		}
+		
+		fmt.Printf("✓ Config updated: %s\n", configPath)
+		fmt.Printf("✓ Mode: %s\n", mode)
+		
+		if mode == "china-split" {
+			fmt.Println("  - Domestic traffic: DIRECT")
+			fmt.Println("  - International traffic: PROXY")
+		} else {
+			fmt.Println("  - All traffic: PROXY")
+		}
+		
+		return nil
+	},
+}
+
+func init() {
 	rootCmd.AddCommand(testCmd)
 	rootCmd.AddCommand(splitCmd)
+}
+
+// importCmd represents the import command
+var importCmd = &cobra.Command{
+	Use:   "import [link|subscription-url]",
+	Short: "Import proxy configuration from link or subscription URL",
+	Long: `Import proxy configuration from various sources:
+  - vmess:// links
+  - vless:// links
+  - trojan:// links
+  - ss:// links
+  - Subscription URLs (airport links)
+  
+Examples:
+  proxy-cli import "vmess://eyJ2IjoiMiIs..."
+  proxy-cli import "vless://uuid@server:port?security=tls#name"
+  proxy-cli import "https://example.com/sub?token=xxx"`,
+	Args: cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		input := args[0]
+		
+		// 检测输入类型
+		protocol := parser.DetectProtocol(input)
+		
+		switch protocol {
+		case "subscription":
+			fmt.Println("检测到订阅链接，正在解析...")
+			sub, err := parser.ParseSubscription(input)
+			if err != nil {
+				return fmt.Errorf("解析订阅失败: %w", err)
+			}
+			
+			fmt.Printf("✓ 解析成功，共 %d 个节点\n", sub.Count)
+			fmt.Println()
+			
+			for i, node := range sub.Proxies {
+				fmt.Printf("%d. %s (%s)\n", i+1, node.Name, node.Type)
+				fmt.Printf("   服务器: %s:%d\n", node.Server, node.Port)
+				fmt.Println()
+			}
+			
+			// 保存到配置
+			cfg := config.LoadConfig()
+			
+			// 生成配置文件
+			for _, node := range sub.Proxies {
+				fmt.Printf("生成配置: %s\n", node.Name)
+				// 根据节点类型生成配置
+				switch node.Type {
+				case "vmess":
+					engine.WriteXrayConfig(
+						filepath.Join(cfg.WorkDir, "engines", "v2ray"),
+						cfg.LogLevel,
+						"vmess",
+						&engine.ProxyConfigData{
+							Protocol:   "vmess",
+							ServerAddr: node.Server,
+							ServerPort: node.Port,
+							UUID:       node.UUID,
+							SNI:        node.SNI,
+							Network:    node.Network,
+							WSPATH:     node.WSPATH,
+							LogLevel:   cfg.LogLevel,
+						},
+					)
+				case "vless":
+					engine.WriteXrayConfig(
+						filepath.Join(cfg.WorkDir, "engines", "v2ray"),
+						cfg.LogLevel,
+						"vless",
+						&engine.ProxyConfigData{
+							Protocol:   "vless",
+							ServerAddr: node.Server,
+							ServerPort: node.Port,
+							UUID:       node.UUID,
+							SNI:        node.SNI,
+							Network:    node.Network,
+							WSPATH:     node.WSPATH,
+							Flow:       node.Flow,
+							LogLevel:   cfg.LogLevel,
+						},
+					)
+				case "trojan":
+					engine.WriteXrayConfig(
+						filepath.Join(cfg.WorkDir, "engines", "v2ray"),
+						cfg.LogLevel,
+						"trojan",
+						&engine.ProxyConfigData{
+							Protocol:   "trojan",
+							ServerAddr: node.Server,
+							ServerPort: node.Port,
+							Password:   node.Password,
+							SNI:        node.SNI,
+							LogLevel:   cfg.LogLevel,
+						},
+					)
+				}
+			}
+			
+		case "vmess", "vless", "trojan", "shadowsocks":
+			fmt.Printf("检测到 %s 协议链接\n", protocol)
+			node, err := parser.ParseProxyLink(input)
+			if err != nil {
+				return fmt.Errorf("解析链接失败: %w", err)
+			}
+			
+			fmt.Printf("✓ 解析成功\n")
+			fmt.Printf("  名称: %s\n", node.Name)
+			fmt.Printf("  类型: %s\n", node.Type)
+			fmt.Printf("  服务器: %s:%d\n", node.Server, node.Port)
+			fmt.Println()
+			
+			// 保存到配置
+			cfg := config.LoadConfig()
+			
+			switch node.Type {
+			case "vmess":
+				engine.WriteXrayConfig(
+					filepath.Join(cfg.WorkDir, "engines", "v2ray"),
+					cfg.LogLevel,
+					"vmess",
+					&engine.ProxyConfigData{
+						Protocol:   "vmess",
+						ServerAddr: node.Server,
+						ServerPort: node.Port,
+						UUID:       node.UUID,
+						SNI:        node.SNI,
+						Network:    node.Network,
+						WSPATH:     node.WSPATH,
+						LogLevel:   cfg.LogLevel,
+					},
+				)
+			case "vless":
+				engine.WriteXrayConfig(
+					filepath.Join(cfg.WorkDir, "engines", "v2ray"),
+					cfg.LogLevel,
+					"vless",
+					&engine.ProxyConfigData{
+						Protocol:   "vless",
+						ServerAddr: node.Server,
+						ServerPort: node.Port,
+						UUID:       node.UUID,
+						SNI:        node.SNI,
+						Network:    node.Network,
+						WSPATH:     node.WSPATH,
+						Flow:       node.Flow,
+						LogLevel:   cfg.LogLevel,
+					},
+				)
+			case "trojan":
+				engine.WriteXrayConfig(
+					filepath.Join(cfg.WorkDir, "engines", "v2ray"),
+					cfg.LogLevel,
+					"trojan",
+					&engine.ProxyConfigData{
+						Protocol:   "trojan",
+						ServerAddr: node.Server,
+						ServerPort: node.Port,
+						Password:   node.Password,
+						SNI:        node.SNI,
+						LogLevel:   cfg.LogLevel,
+					},
+				)
+			}
+			
+			fmt.Printf("✓ 配置已保存\n")
+			
+		default:
+			return fmt.Errorf("无法识别的输入格式: %s", input)
+		}
+		
+		return nil
+	},
+}
+
+func init() {
 	rootCmd.AddCommand(importCmd)
 }
