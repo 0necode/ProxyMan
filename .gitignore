@@ -36,3 +36,7 @@ Thumbs.db
 *.log
 *.pid
 *.sock
+
+# Build artifacts
+proxy-cli-linux-amd64
+dist/
