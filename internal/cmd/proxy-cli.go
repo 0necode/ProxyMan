@@ -21,8 +21,8 @@ var rootCmd = &cobra.Command{
 	Long: `proxy-cli is a unified proxy CLI that manages V2Ray and Clash protocols
 on Linux, enabling local system access to the internet.
 
-Supports: V2Ray (vmess, vless, trojan, ss, socks, http, shadowsocks)
-          Clash (vmess, vless, trojan, ss, http, https, socks5)`,
+Supports: V2Ray (vmess, vless, vless-reality, vless-grpc, trojan, trojan-grpc, ss, ss2022, anytls, socks, http)
+          Clash (vmess, vless, trojan, ss, http, https, socks5, tuic, hysteria, anytls)`,
 	Version: version,
 }
 

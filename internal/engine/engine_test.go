@@ -255,3 +255,85 @@ func TestWriteXrayShadowsocksConfig(t *testing.T) {
 	}
 	t.Logf("Shadowsocks config generated at %s (%d bytes)", configPath, len(data))
 }
+
+func TestWriteXrayVLessRealityConfig(t *testing.T) {
+	dir := t.TempDir()
+	configPath, err := WriteXrayConfig(dir, "info", "vless-reality", nil)
+	if err != nil {
+		t.Fatalf("WriteXrayConfig failed: %v", err)
+	}
+
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		t.Fatalf("read config: %v", err)
+	}
+
+	content := string(data)
+	if !strings.Contains(content, "reality") {
+		t.Error("vless-reality config missing reality security")
+	}
+	if !strings.Contains(content, "vless") {
+		t.Error("vless-reality config missing vless protocol")
+	}
+	t.Logf("VLess+Reality config generated at %s (%d bytes)", configPath, len(data))
+}
+
+func TestWriteXrayVLessGRPCConfig(t *testing.T) {
+	dir := t.TempDir()
+	configPath, err := WriteXrayConfig(dir, "info", "vless-grpc", nil)
+	if err != nil {
+		t.Fatalf("WriteXrayConfig failed: %v", err)
+	}
+
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		t.Fatalf("read config: %v", err)
+	}
+
+	content := string(data)
+	if !strings.Contains(content, "grpc") {
+		t.Error("vless-grpc config missing grpc network")
+	}
+	if !strings.Contains(content, "vless") {
+		t.Error("vless-grpc config missing vless protocol")
+	}
+	t.Logf("VLess+gRPC config generated at %s (%d bytes)", configPath, len(data))
+}
+
+func TestWriteXrayAnyTLSConfig(t *testing.T) {
+	dir := t.TempDir()
+	configPath, err := WriteXrayConfig(dir, "info", "anytls", nil)
+	if err != nil {
+		t.Fatalf("WriteXrayConfig failed: %v", err)
+	}
+
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		t.Fatalf("read config: %v", err)
+	}
+
+	content := string(data)
+	if !strings.Contains(content, "anytls") {
+		t.Error("anytls config missing anytls protocol")
+	}
+	t.Logf("AnyTLS config generated at %s (%d bytes)", configPath, len(data))
+}
+
+func TestWriteXrayShadowsocks2022Config(t *testing.T) {
+	dir := t.TempDir()
+	configPath, err := WriteXrayConfig(dir, "info", "ss2022", nil)
+	if err != nil {
+		t.Fatalf("WriteXrayConfig failed: %v", err)
+	}
+
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		t.Fatalf("read config: %v", err)
+	}
+
+	content := string(data)
+	if !strings.Contains(content, "2022-blake3") {
+		t.Error("ss2022 config missing 2022-blake3 cipher")
+	}
+	t.Logf("Shadowsocks-2022 config generated at %s (%d bytes)", configPath, len(data))
+}

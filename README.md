@@ -13,8 +13,8 @@ proxy-cli 是一个统一管理 Xray-core (V2Ray) 和 Mihomo (Clash Meta) 的命
 ### ✨ 核心特性
 
 - **全协议支持**
-  - V2Ray 系列：VMess, VLess, Trojan, Shadowsocks, SOCKS, HTTP
-  - Clash 系列：VMess, VLess, Trojan, Shadowsocks, HTTP/HTTPS, SOCKS5, Tuic, Hysteria2
+  - V2Ray 系列：VMess, VLess, VLess+Reality, VLess+gRPC, Trojan, Trojan+gRPC, Shadowsocks, Shadowsocks-2022, AnyTLS, SOCKS, HTTP
+  - Clash 系列：VMess, VLess, Trojan, Shadowsocks, HTTP/HTTPS, SOCKS5, Tuic, Hysteria, Hysteria2, AnyTLS
 
 - **智能分流**
   - 🇨🇳 国内直连：GEOIP/CN 规则自动直连

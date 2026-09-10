@@ -374,6 +374,7 @@ WantedBy=multi-user.target
 // ==================== 模板数据 ====================
 
 // ProxyConfigData 代理配置参数
+// ProxyConfigData 代理配置参数
 type ProxyConfigData struct {
 	Protocol   string
 	ServerAddr string
@@ -384,6 +385,10 @@ type ProxyConfigData struct {
 	SNI        string
 	Network    string
 	LogLevel   string
+	PublicKey  string  // Reality 协议
+	ShortId    string  // Reality 协议
+	SpiderX    string  // Reality 协议
+	GRPCService string // gRPC 协议
 }
 
 // WriteXrayConfig 根据协议生成 Xray 配置
@@ -411,6 +416,16 @@ func WriteXrayConfig(engineDir string, logLevel string, protocol string, data *P
 		configTemplate = XrayTrojanConfig
 	case "shadowsocks", "ss":
 		configTemplate = XrayShadowsocksConfig
+	case "vless-reality", "reality":
+		configTemplate = XrayVLessRealityConfig
+	case "vless-grpc", "grpc":
+		configTemplate = XrayVLessGRPCConfig
+	case "trojan-grpc":
+		configTemplate = XrayTrojanGRPCConfig
+	case "ss2022", "shadowsocks-2022":
+		configTemplate = XrayShadowsocks2022Config
+	case "anytls":
+		configTemplate = XrayAnyTLSConfig
 	default:
 		configTemplate = XrayVMessConfig
 	}
@@ -538,3 +553,268 @@ WantedBy=multi-user.target
 	}
 	return servicePath, nil
 }
+
+// ==================== 扩展协议模板 ====================
+
+// XrayVLessRealityConfig 支持 VLess+Reality (最新抗审查协议)
+const XrayVLessRealityConfig = `{
+  "log": {"loglevel": "{{.LogLevel}}"},
+  "inbounds": [
+    {"tag":"http-in","port":10809,"protocol":"http","listen":"127.0.0.1","settings":{}},
+    {"tag":"socks-in","port":10808,"protocol":"socks","listen":"127.0.0.1","settings":{"udp":true}}
+  ],
+  "outbounds": [
+    {
+      "tag":"proxy","protocol":"vless",
+      "settings":{"vnext":[{"address":"{{.ServerAddr}}","port":{{.ServerPort}},"users":[{"id":"{{.UUID}}","encryption":"none","flow":"xtls-rprx-vision"}]}]},
+      "streamSettings":{"network":"tcp","security":"reality","realitySettings":{"serverName":"{{.SNI}}","fingerprint":"chrome","publicKey":"{{.PublicKey}}","shortId":"{{.ShortId}}","spiderX":"{{.SpiderX}}"}}
+    },
+    {"tag":"direct","protocol":"freedom","settings":{}},
+    {"tag":"block","protocol":"blackhole","settings":{}}
+  ],
+  "routing":{"domainStrategy":"IPIfNonMatch","rules":[
+    {"type":"field","ip":["geoip:cn","geoip:private"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:cn"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:geolocation-!cn"],"outboundTag":"proxy"}
+  ]}
+}`
+
+// XrayVLessGRPCConfig 支持 VLess+gRPC 高性能传输
+const XrayVLessGRPCConfig = `{
+  "log": {"loglevel": "{{.LogLevel}}"},
+  "inbounds": [
+    {"tag":"http-in","port":10809,"protocol":"http","listen":"127.0.0.1","settings":{}},
+    {"tag":"socks-in","port":10808,"protocol":"socks","listen":"127.0.0.1","settings":{"udp":true}}
+  ],
+  "outbounds": [
+    {
+      "tag":"proxy","protocol":"vless",
+      "settings":{"vnext":[{"address":"{{.ServerAddr}}","port":{{.ServerPort}},"users":[{"id":"{{.UUID}}","encryption":"none"}]}]},
+      "streamSettings":{"network":"grpc","security":"tls","tlsSettings":{"serverName":"{{.SNI}}"},"grpcSettings":{"serviceName":"{{.GRPCService}}"}}
+    },
+    {"tag":"direct","protocol":"freedom","settings":{}},
+    {"tag":"block","protocol":"blackhole","settings":{}}
+  ],
+  "routing":{"domainStrategy":"IPIfNonMatch","rules":[
+    {"type":"field","ip":["geoip:cn","geoip:private"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:cn"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:geolocation-!cn"],"outboundTag":"proxy"}
+  ]}
+}`
+
+// XrayTrojanGRPCConfig 支持 Trojan+gRPC 传输
+const XrayTrojanGRPCConfig = `{
+  "log": {"loglevel": "{{.LogLevel}}"},
+  "inbounds": [
+    {"tag":"http-in","port":10809,"protocol":"http","listen":"127.0.0.1","settings":{}},
+    {"tag":"socks-in","port":10808,"protocol":"socks","listen":"127.0.0.1","settings":{"udp":true}}
+  ],
+  "outbounds": [
+    {
+      "tag":"proxy","protocol":"trojan",
+      "settings":{"servers":[{"address":"{{.ServerAddr}}","port":{{.ServerPort}},"password":"{{.Password}}"}]},
+      "streamSettings":{"network":"grpc","security":"tls","tlsSettings":{"serverName":"{{.SNI}}"},"grpcSettings":{"serviceName":"{{.GRPCService}}"}}
+    },
+    {"tag":"direct","protocol":"freedom","settings":{}},
+    {"tag":"block","protocol":"blackhole","settings":{}}
+  ],
+  "routing":{"domainStrategy":"IPIfNonMatch","rules":[
+    {"type":"field","ip":["geoip:cn","geoip:private"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:cn"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:geolocation-!cn"],"outboundTag":"proxy"}
+  ]}
+}`
+
+// XrayShadowsocks2022Config 支持 Shadowsocks-2022 新一代协议
+const XrayShadowsocks2022Config = `{
+  "log": {"loglevel": "{{.LogLevel}}"},
+  "inbounds": [
+    {"tag":"http-in","port":10809,"protocol":"http","listen":"127.0.0.1","settings":{}},
+    {"tag":"socks-in","port":10808,"protocol":"socks","listen":"127.0.0.1","settings":{"udp":true}}
+  ],
+  "outbounds": [
+    {
+      "tag":"proxy","protocol":"shadowsocks",
+      "settings":{"servers":[{"address":"{{.ServerAddr}}","port":{{.ServerPort}},"method":"2022-blake3-aes-128-gcm","password":"{{.Password}}"}]}
+    },
+    {"tag":"direct","protocol":"freedom","settings":{}},
+    {"tag":"block","protocol":"blackhole","settings":{}}
+  ],
+  "routing":{"domainStrategy":"IPIfNonMatch","rules":[
+    {"type":"field","ip":["geoip:cn","geoip:private"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:cn"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:geolocation-!cn"],"outboundTag":"proxy"}
+  ]}
+}`
+
+// XrayAnyTLSConfig 支持 AnyTLS 协议 (基于 TLS 的新型代理协议)
+const XrayAnyTLSConfig = `{
+  "log": {"loglevel": "{{.LogLevel}}"},
+  "inbounds": [
+    {"tag":"http-in","port":10809,"protocol":"http","listen":"127.0.0.1","settings":{}},
+    {"tag":"socks-in","port":10808,"protocol":"socks","listen":"127.0.0.1","settings":{"udp":true}}
+  ],
+  "outbounds": [
+    {
+      "tag":"proxy","protocol":"anytls",
+      "settings":{"servers":[{"address":"{{.ServerAddr}}","port":{{.ServerPort}},"password":"{{.Password}}","serverName":"{{.SNI}}"}]},
+      "streamSettings":{"network":"tcp","security":"tls","tlsSettings":{"serverName":"{{.SNI}}","fingerprint":"chrome"}}
+    },
+    {"tag":"direct","protocol":"freedom","settings":{}},
+    {"tag":"block","protocol":"blackhole","settings":{}}
+  ],
+  "routing":{"domainStrategy":"IPIfNonMatch","rules":[
+    {"type":"field","ip":["geoip:cn","geoip:private"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:cn"],"outboundTag":"direct"},
+    {"type":"field","domain":["geosite:geolocation-!cn"],"outboundTag":"proxy"}
+  ]}
+}`
+
+// ProxyConfigData 扩展字段
+// PublicKey 用于 Reality 协议
+// ShortId 用于 Reality 协议
+// SpiderX 用于 Reality 协议
+// GRPCService 用于 gRPC 协议
+
+// ==================== Mihomo 扩展协议 ====================
+
+// MihomoAnyTLSConfig 支持 AnyTLS 协议
+const MihomoAnyTLSConfig = `# ============================================
+# proxy-cli Mihomo AnyTLS 配置
+# ============================================
+
+mixed-port: 7890
+allow-lan: false
+mode: rule
+log-level: {{.LogLevel}}
+
+dns:
+  enable: true
+  enhanced-mode: fake-ip
+  nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  fallback:
+    - https://dns.google/dns-query
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+
+proxies:
+  - name: "anytls-node"
+    type: anytls
+    server: YOUR_SERVER_ADDRESS
+    port: 443
+    password: YOUR_PASSWORD
+    sni: your.domain.com
+    client-fingerprint: chrome
+
+proxy-groups:
+  - name: "Proxy"
+    type: select
+    proxies:
+      - anytls-node
+      - DIRECT
+
+rules:
+  - GEOSITE,cn,DIRECT
+  - GEOIP,cn,DIRECT,no-resolve
+  - GEOIP,private,DIRECT,no-resolve
+  - MATCH,Proxy
+`
+
+// MihomoHysteriaConfig 支持 Hysteria 协议
+const MihomoHysteriaConfig = `# ============================================
+# proxy-cli Mihomo Hysteria 配置
+# ============================================
+
+mixed-port: 7890
+allow-lan: false
+mode: rule
+log-level: {{.LogLevel}}
+
+dns:
+  enable: true
+  enhanced-mode: fake-ip
+  nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  fallback:
+    - https://dns.google/dns-query
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+
+proxies:
+  - name: "hysteria-node"
+    type: hysteria
+    server: YOUR_SERVER_ADDRESS
+    port: 443
+    ports: 443
+    password: YOUR_PASSWORD
+    sni: your.domain.com
+    up: 100 Mbps
+    down: 100 Mbps
+
+proxy-groups:
+  - name: "Proxy"
+    type: select
+    proxies:
+      - hysteria-node
+      - DIRECT
+
+rules:
+  - GEOSITE,cn,DIRECT
+  - GEOIP,cn,DIRECT,no-resolve
+  - GEOIP,private,DIRECT,no-resolve
+  - MATCH,Proxy
+`
+
+// MihomoTuicConfig 支持 Tuic 协议
+const MihomoTuicConfig = `# ============================================
+# proxy-cli Mihomo Tuic 配置
+# ============================================
+
+mixed-port: 7890
+allow-lan: false
+mode: rule
+log-level: {{.LogLevel}}
+
+dns:
+  enable: true
+  enhanced-mode: fake-ip
+  nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  fallback:
+    - https://dns.google/dns-query
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+
+proxies:
+  - name: "tuic-node"
+    type: tuic
+    server: YOUR_SERVER_ADDRESS
+    port: 443
+    uuid: YOUR_UUID
+    password: YOUR_PASSWORD
+    congestion-control: bbr
+    tls:
+      sni: your.domain.com
+      skip-cert-verify: false
+      fingerprint: chrome
+
+proxy-groups:
+  - name: "Proxy"
+    type: select
+    proxies:
+      - tuic-node
+      - DIRECT
+
+rules:
+  - GEOSITE,cn,DIRECT
+  - GEOIP,cn,DIRECT,no-resolve
+  - GEOIP,private,DIRECT,no-resolve
+  - MATCH,Proxy
+`
