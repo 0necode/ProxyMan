@@ -108,7 +108,7 @@ const XrayShadowsocksConfig = `{
 
 // MihomoFullConfig 支持全协议 + 自动分流
 const MihomoFullConfig = `# ============================================
-# proxy-cli Mihomo 全协议配置
+# proxyman Mihomo 全协议配置
 # 支持: VMess, VLess, Trojan, Shadowsocks,
 #       HTTP/HTTPS, SOCKS5, Tuic, Hysteria2
 # ============================================
@@ -296,7 +296,7 @@ rules:
 
 // MihomoChinaSplitConfig 专注国内直连分流
 const MihomoChinaSplitConfig = `# ============================================
-# proxy-cli 国内直连分流配置
+# proxyman 国内直连分流配置
 # 特点: 国内流量直连, 国际流量走代理
 # ============================================
 
@@ -503,7 +503,7 @@ func WriteSystemdService(engineDir, binaryName, configName, description string) 
 		return "", fmt.Errorf("parse systemd template: %w", err)
 	}
 
-	serviceName := fmt.Sprintf("proxy-cli-%s.service", binaryName)
+	serviceName := fmt.Sprintf("proxyman-%s.service", binaryName)
 	servicePath := filepath.Join(engineDir, serviceName)
 	f, err := os.Create(servicePath)
 	if err != nil {
@@ -520,27 +520,27 @@ func WriteSystemdService(engineDir, binaryName, configName, description string) 
 // WriteTProxyService 生成 TProxy 透明代理 systemd 服务
 func WriteTProxyService(engineDir, binaryName, configName string) (string, error) {
 	tproxyService := `[Unit]
-Description=proxy-cli TProxy Transparent Proxy
+Description=proxyman TProxy Transparent Proxy
 After=network.target
 
 [Service]
 Type=simple
-ExecStartPre=/sbin/iptables -t mangle -N PROXYCLI
-ExecStartPre=/sbin/iptables -t mangle -A PROXYCLI -d 0.0.0.0/8 -j RETURN
-ExecStartPre=/sbin/iptables -t mangle -A PROXYCLI -d 10.0.0.0/8 -j RETURN
-ExecStartPre=/sbin/iptables -t mangle -A PROXYCLI -d 127.0.0.0/8 -j RETURN
-ExecStartPre=/sbin/iptables -t mangle -A PROXYCLI -d 169.254.0.0/16 -j RETURN
-ExecStartPre=/sbin/iptables -t mangle -A PROXYCLI -d 172.16.0.0/12 -j RETURN
-ExecStartPre=/sbin/iptables -t mangle -A PROXYCLI -d 192.168.0.0/16 -j RETURN
-ExecStartPre=/sbin/iptables -t mangle -A PROXYCLI -d 224.0.0.0/4 -j RETURN
-ExecStartPre=/sbin/iptables -t mangle -A PROXYCLI -d 240.0.0.0/4 -j RETURN
-ExecStartPre=/sbin/iptables -t mangle -A PREROUTING -p tcp -j PROXYCLI
-ExecStartPre=/sbin/iptables -t mangle -A PREROUTING -p udp -j PROXYCLI
+ExecStartPre=/sbin/iptables -t mangle -N PROXYMAN
+ExecStartPre=/sbin/iptables -t mangle -A PROXYMAN -d 0.0.0.0/8 -j RETURN
+ExecStartPre=/sbin/iptables -t mangle -A PROXYMAN -d 10.0.0.0/8 -j RETURN
+ExecStartPre=/sbin/iptables -t mangle -A PROXYMAN -d 127.0.0.0/8 -j RETURN
+ExecStartPre=/sbin/iptables -t mangle -A PROXYMAN -d 169.254.0.0/16 -j RETURN
+ExecStartPre=/sbin/iptables -t mangle -A PROXYMAN -d 172.16.0.0/12 -j RETURN
+ExecStartPre=/sbin/iptables -t mangle -A PROXYMAN -d 192.168.0.0/16 -j RETURN
+ExecStartPre=/sbin/iptables -t mangle -A PROXYMAN -d 224.0.0.0/4 -j RETURN
+ExecStartPre=/sbin/iptables -t mangle -A PROXYMAN -d 240.0.0.0/4 -j RETURN
+ExecStartPre=/sbin/iptables -t mangle -A PREROUTING -p tcp -j PROXYMAN
+ExecStartPre=/sbin/iptables -t mangle -A PREROUTING -p udp -j PROXYMAN
 ExecStart=%s -d %s
-ExecStopPost=/sbin/iptables -t mangle -D PREROUTING -p tcp -j PROXYCLI
-ExecStopPost=/sbin/iptables -t mangle -D PREROUTING -p udp -j PROXYCLI
-ExecStopPost=/sbin/iptables -t mangle -F PROXYCLI
-ExecStopPost=/sbin/iptables -t mangle -X PROXYCLI
+ExecStopPost=/sbin/iptables -t mangle -D PREROUTING -p tcp -j PROXYMAN
+ExecStopPost=/sbin/iptables -t mangle -D PREROUTING -p udp -j PROXYMAN
+ExecStopPost=/sbin/iptables -t mangle -F PROXYMAN
+ExecStopPost=/sbin/iptables -t mangle -X PROXYMAN
 Restart=on-failure
 RestartSec=5
 CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW
@@ -549,7 +549,7 @@ AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW
 [Install]
 WantedBy=multi-user.target
 `
-	servicePath := filepath.Join(engineDir, "proxy-cli-tproxy.service")
+	servicePath := filepath.Join(engineDir, "proxyman-tproxy.service")
 	f, err := os.Create(servicePath)
 	if err != nil {
 		return "", fmt.Errorf("create tproxy service: %w", err)
@@ -692,7 +692,7 @@ const XrayAnyTLSConfig = `{
 
 // MihomoAnyTLSConfig 支持 AnyTLS 协议
 const MihomoAnyTLSConfig = `# ============================================
-# proxy-cli Mihomo AnyTLS 配置
+# proxyman Mihomo AnyTLS 配置
 # ============================================
 
 mixed-port: 7890
@@ -737,7 +737,7 @@ rules:
 
 // MihomoHysteriaConfig 支持 Hysteria 协议
 const MihomoHysteriaConfig = `# ============================================
-# proxy-cli Mihomo Hysteria 配置
+# proxyman Mihomo Hysteria 配置
 # ============================================
 
 mixed-port: 7890
@@ -784,7 +784,7 @@ rules:
 
 // MihomoTuicConfig 支持 Tuic 协议
 const MihomoTuicConfig = `# ============================================
-# proxy-cli Mihomo Tuic 配置
+# proxyman Mihomo Tuic 配置
 # ============================================
 
 mixed-port: 7890

@@ -1,8 +1,8 @@
-# proxy-cli 项目总结
+# proxyman 项目总结
 
 ## 📊 项目概况
 
-**proxy-cli** 是一个一站式 Linux 网络代理 CLI 工具，统一管理 Xray (V2Ray) 和 Mihomo (Clash Meta)。
+**proxyman** 是一个一站式 Linux 网络代理 CLI 工具，统一管理 Xray (V2Ray) 和 Mihomo (Clash Meta)。
 
 ## 🎯 核心功能
 
@@ -41,7 +41,7 @@
 ## 📁 项目结构
 
 ```
-proxy-cli/
+proxyman/
 ├── main.go                    # 入口文件
 ├── go.mod                     # Go 模块定义
 ├── go.sum                     # 依赖锁定
@@ -53,7 +53,7 @@ proxy-cli/
 ├── .gitignore               # Git 忽略规则
 └── internal/
     ├── cmd/
-    │   ├── proxy-cli.go      # CLI 入口
+    │   ├── proxyman.go      # CLI 入口
     │   └── commands.go       # 命令实现
     ├── config/
     │   ├── config.go         # 配置管理
@@ -73,8 +73,8 @@ proxy-cli/
 
 ```bash
 # 克隆仓库
-git clone https://github.com/yourusername/proxy-cli.git
-cd proxy-cli
+git clone https://github.com/geek0ne/proxyman.git
+cd proxyman
 
 # 编译
 make build
@@ -87,40 +87,40 @@ make install
 
 ```bash
 # 安装引擎
-proxy-cli install v2ray
-proxy-cli install clash
+proxyman install v2ray
+proxyman install clash
 
 # 配置代理服务器
-proxy-cli config edit v2ray
-proxy-cli config edit clash
+proxyman config edit v2ray
+proxyman config edit clash
 
 # 启动代理
-proxy-cli start v2ray ~/.config/proxy-cli/engines/v2ray/config.json
-proxy-cli start clash ~/.config/proxy-cli/engines/clash/config.yaml
+proxyman start v2ray ~/.config/proxyman/engines/v2ray/config.json
+proxyman start clash ~/.config/proxyman/engines/clash/config.yaml
 
 # 开启系统代理
-proxy-cli system-proxy enable
+proxyman system-proxy enable
 
 # 分流模式
-proxy-cli split clash china-split
-proxy-cli split clash full
+proxyman split clash china-split
+proxyman split clash full
 ```
 
 ## 📊 命令清单
 
 | 命令 | 说明 |
 |------|------|
-| `proxy-cli install <v2ray\|clash>` | 安装引擎 |
-| `proxy-cli uninstall <v2ray\|clash>` | 卸载引擎 |
-| `proxy-cli start <engine> <config>` | 启动引擎 |
-| `proxy-cli stop <engine>` | 停止引擎 |
-| `proxy-cli status` | 查看引擎状态 |
-| `proxy-cli config show` | 查看配置 |
-| `proxy-cli config set <key> <value>` | 设置配置 |
-| `proxy-cli config edit <engine>` | 编辑配置 |
-| `proxy-cli split <engine> <mode>` | 分流模式 |
-| `proxy-cli test <engine>` | 测试连接 |
-| `proxy-cli system-proxy enable/disable/status` | 系统代理 |
+| `proxyman install <v2ray\|clash>` | 安装引擎 |
+| `proxyman uninstall <v2ray\|clash>` | 卸载引擎 |
+| `proxyman start <engine> <config>` | 启动引擎 |
+| `proxyman stop <engine>` | 停止引擎 |
+| `proxyman status` | 查看引擎状态 |
+| `proxyman config show` | 查看配置 |
+| `proxyman config set <key> <value>` | 设置配置 |
+| `proxyman config edit <engine>` | 编辑配置 |
+| `proxyman split <engine> <mode>` | 分流模式 |
+| `proxyman test <engine>` | 测试连接 |
+| `proxyman system-proxy enable/disable/status` | 系统代理 |
 
 ## 🛡️ 安全特性
 

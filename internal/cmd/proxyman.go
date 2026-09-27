@@ -16,9 +16,9 @@ var (
 
 // rootCmd is the base command
 var rootCmd = &cobra.Command{
-	Use:   "proxy-cli",
+	Use:   "proxyman",
 	Short: "A unified proxy CLI for Linux — V2Ray & Clash protocols",
-	Long: `proxy-cli is a unified proxy CLI that manages V2Ray and Clash protocols
+	Long: `proxyman is a unified proxy CLI that manages V2Ray and Clash protocols
 on Linux, enabling local system access to the internet.
 
 Supports: V2Ray (vmess, vless, vless-reality, vless-grpc, trojan, trojan-grpc, ss, ss2022, anytls, socks, http)
@@ -37,17 +37,10 @@ func init() {
 	rootCmd.SetVersionTemplate("{{.Version}}\n")
 
 	// Global flags
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.proxy-cli.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.proxyman.yaml)")
 	rootCmd.Flags().BoolP("verbose", "v", false, "verbose output")
 
-	// Add subcommands
-	rootCmd.AddCommand(installCmd)
-	rootCmd.AddCommand(uninstallCmd)
-	rootCmd.AddCommand(startCmd)
-	rootCmd.AddCommand(stopCmd)
-	rootCmd.AddCommand(statusCmd)
-	rootCmd.AddCommand(configCmd)
-	rootCmd.AddCommand(systemProxyCmd)
+	// Subcommands are registered in commands.go
 }
 
 // initConfig reads in config file and ENV variables
@@ -60,20 +53,20 @@ func initConfig() {
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
-		// Search config in home directory with name ".proxy-cli" (without extension)
-		viper.AddConfigPath(filepath.Join(home, ".config", "proxy-cli"))
+		// Search config in home directory with name ".proxyman" (without extension)
+		viper.AddConfigPath(filepath.Join(home, ".config", "proxyman"))
 		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".proxy-cli")
+		viper.SetConfigName(".proxyman")
 	}
 
-	viper.SetEnvPrefix("PROXYCLI")
-	viper.BindEnv("workdir", "PROXYCLI_WORKDIR")
-	viper.BindEnv("loglevel", "PROXYCLI_LOGLEVEL")
-	viper.BindEnv("ipv6", "PROXYCLI_IPV6")
-	viper.BindEnv("systemproxy", "PROXYCLI_SYSTEMPROXY")
-	viper.BindEnv("v2ray_url", "PROXYCLI_V2RAY_URL")
-	viper.BindEnv("clash_url", "PROXYCLI_CLASH_URL")
+	viper.SetEnvPrefix("PROXYMAN")
+	viper.BindEnv("workdir", "PROXYMAN_WORKDIR")
+	viper.BindEnv("loglevel", "PROXYMAN_LOGLEVEL")
+	viper.BindEnv("ipv6", "PROXYMAN_IPV6")
+	viper.BindEnv("systemproxy", "PROXYMAN_SYSTEMPROXY")
+	viper.BindEnv("v2ray_url", "PROXYMAN_V2RAY_URL")
+	viper.BindEnv("clash_url", "PROXYMAN_CLASH_URL")
 
 	// If a config file is found, read it in
 	if err := viper.ReadInConfig(); err == nil {

@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================
-# proxy-cli 一键安装脚本
+# proxyman 一键安装脚本
 # 支持: Linux (amd64)
 # ============================================
 
@@ -15,9 +15,9 @@ NC='\033[0m' # No Color
 
 # 版本信息
 VERSION="1.0.0"
-REPO="yourusername/proxy-cli"
+REPO="yourusername/proxyman"
 INSTALL_DIR="/usr/local/bin"
-CONFIG_DIR="$HOME/.config/proxy-cli"
+CONFIG_DIR="$HOME/.config/proxyman"
 
 # 打印信息
 info() {
@@ -82,20 +82,20 @@ install_deps() {
 
 # 下载二进制
 download_binary() {
-    info "下载 proxy-cli v${VERSION}..."
+    info "下载 proxyman v${VERSION}..."
     
     # 尝试 GitHub 镜像
     local urls=(
-        "https://ghfast.top/https://github.com/${REPO}/releases/download/v${VERSION}/proxy-cli-linux-amd64.tar.gz"
-        "https://ghproxy.net/https://github.com/${REPO}/releases/download/v${VERSION}/proxy-cli-linux-amd64.tar.gz"
-        "https://github.com/${REPO}/releases/download/v${VERSION}/proxy-cli-linux-amd64.tar.gz"
+        "https://ghfast.top/https://github.com/${REPO}/releases/download/v${VERSION}/proxyman-linux-amd64.tar.gz"
+        "https://ghproxy.net/https://github.com/${REPO}/releases/download/v${VERSION}/proxyman-linux-amd64.tar.gz"
+        "https://github.com/${REPO}/releases/download/v${VERSION}/proxyman-linux-amd64.tar.gz"
     )
     
     local downloaded=false
     for url in "${urls[@]}"; do
         info "尝试下载: $url"
-        if curl -fsSL "$url" -o /tmp/proxy-cli.tar.gz 2>/dev/null || \
-           wget -q "$url" -O /tmp/proxy-cli.tar.gz 2>/dev/null; then
+        if curl -fsSL "$url" -o /tmp/proxyman.tar.gz 2>/dev/null || \
+           wget -q "$url" -O /tmp/proxyman.tar.gz 2>/dev/null; then
             downloaded=true
             break
         fi
@@ -110,26 +110,26 @@ download_binary() {
 
 # 安装二进制
 install_binary() {
-    info "安装 proxy-cli..."
+    info "安装 proxyman..."
     
     # 创建临时目录
-    mkdir -p /tmp/proxy-cli-install
-    cd /tmp/proxy-cli-install
+    mkdir -p /tmp/proxyman-install
+    cd /tmp/proxyman-install
     
     # 解压
-    tar -xzf /tmp/proxy-cli.tar.gz
+    tar -xzf /tmp/proxyman.tar.gz
     
     # 安装到系统路径
     if [ -w "$INSTALL_DIR" ]; then
-        cp proxy-cli-linux-amd64 "$INSTALL_DIR/proxy-cli"
+        cp proxyman-linux-amd64 "$INSTALL_DIR/proxyman"
     else
-        sudo cp proxy-cli-linux-amd64 "$INSTALL_DIR/proxy-cli"
+        sudo cp proxyman-linux-amd64 "$INSTALL_DIR/proxyman"
     fi
     
-    chmod +x "$INSTALL_DIR/proxy-cli"
+    chmod +x "$INSTALL_DIR/proxyman"
     
     # 清理
-    rm -rf /tmp/proxy-cli-install /tmp/proxy-cli.tar.gz
+    rm -rf /tmp/proxyman-install /tmp/proxyman.tar.gz
     
     success "安装完成"
 }
@@ -148,9 +148,9 @@ setup_config() {
 verify_installation() {
     info "验证安装..."
     
-    if command -v proxy-cli &> /dev/null; then
-        local version=$(proxy-cli --version 2>/dev/null || echo "unknown")
-        success "proxy-cli 已安装: $version"
+    if command -v proxyman &> /dev/null; then
+        local version=$(proxyman --version 2>/dev/null || echo "unknown")
+        success "proxyman 已安装: $version"
     else
         error "安装验证失败"
     fi
@@ -160,31 +160,31 @@ verify_installation() {
 print_usage() {
     echo ""
     echo -e "${GREEN}============================================${NC}"
-    echo -e "${GREEN}  proxy-cli 安装完成！${NC}"
+    echo -e "${GREEN}  proxyman 安装完成！${NC}"
     echo -e "${GREEN}============================================${NC}"
     echo ""
     echo "使用方法:"
     echo ""
     echo "1. 安装引擎:"
-    echo "   proxy-cli install v2ray"
-    echo "   proxy-cli install clash"
+    echo "   proxyman install v2ray"
+    echo "   proxyman install clash"
     echo ""
     echo "2. 配置代理:"
-    echo "   proxy-cli config edit v2ray"
-    echo "   proxy-cli config edit clash"
+    echo "   proxyman config edit v2ray"
+    echo "   proxyman config edit clash"
     echo ""
     echo "3. 启动代理:"
-    echo "   proxy-cli start v2ray ~/.config/proxy-cli/engines/v2ray/config.json"
-    echo "   proxy-cli start clash ~/.config/proxy-cli/engines/clash/config.yaml"
+    echo "   proxyman start v2ray ~/.config/proxyman/engines/v2ray/config.json"
+    echo "   proxyman start clash ~/.config/proxyman/engines/clash/config.yaml"
     echo ""
     echo "4. 开启系统代理:"
-    echo "   proxy-cli system-proxy enable"
+    echo "   proxyman system-proxy enable"
     echo ""
     echo "5. 分流模式:"
-    echo "   proxy-cli split clash china-split"
+    echo "   proxyman split clash china-split"
     echo ""
     echo "6. 查看帮助:"
-    echo "   proxy-cli --help"
+    echo "   proxyman --help"
     echo ""
     echo "文档: https://github.com/${REPO}"
     echo ""
@@ -193,7 +193,7 @@ print_usage() {
 # 主函数
 main() {
     echo -e "${GREEN}============================================${NC}"
-    echo -e "${GREEN}  proxy-cli 安装脚本 v${VERSION}${NC}"
+    echo -e "${GREEN}  proxyman 安装脚本 v${VERSION}${NC}"
     echo -e "${GREEN}============================================${NC}"
     echo ""
     

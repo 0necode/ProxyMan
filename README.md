@@ -1,6 +1,7 @@
-# proxy-cli
+# proxyman
 
-> 🚀 一站式 Linux 网络代理 CLI 工具 — 统一管理 Xray (V2Ray) 和 Mihomo (Clash Meta)
+> **One binary to rule them all — manage Xray and Mihomo, every protocol, one command.**
+> 一个二进制，管好双引擎。全协议，一条命令。
 
 [![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat&logo=go)](https://golang.org)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -8,7 +9,9 @@
 
 ## 📖 简介
 
-proxy-cli 是一个统一管理 Xray-core (V2Ray) 和 Mihomo (Clash Meta) 的命令行工具，支持所有主流代理协议，提供全局代理和智能分流功能。
+**proxyman** 是一个面向 Linux 的统一代理命令行工具，用单个静态二进制同时管理 **Xray-core** 与 **Mihomo (Clash Meta)** 两大内核。它覆盖 VMess、VLESS、Reality、gRPC、Trojan、Shadowsocks 2022、AnyTLS、TUIC、Hysteria2 等主流协议，内置订阅链接解析与 GeoIP/GeoSite 智能分流，并提供系统代理开关与 systemd 服务集成——安装、配置、启动、开机自启，全部在终端内完成。
+
+> 统管 Xray 与 Mihomo 双内核的全协议 Linux 代理 CLI。
 
 ### ✨ 核心特性
 
@@ -33,24 +36,24 @@ proxy-cli 是一个统一管理 Xray-core (V2Ray) 和 Mihomo (Clash Meta) 的命
 
 ```bash
 # 克隆仓库
-git clone https://github.com/yourusername/proxy-cli.git
-cd proxy-cli
+git clone https://github.com/geek0ne/proxyman.git
+cd proxyman
 
 # 编译
-go build -o proxy-cli .
+go build -o proxyman .
 
 # 安装到系统路径（可选）
-sudo cp proxy-cli /usr/local/bin/
+sudo cp proxyman /usr/local/bin/
 ```
 
 ### 直接下载
 
 ```bash
 # 下载预编译二进制（Linux amd64）
-wget https://github.com/yourusername/proxy-cli/releases/latest/download/proxy-cli-linux-amd64.tar.gz
-tar -xzf proxy-cli-linux-amd64.tar.gz
-chmod +x proxy-cli
-sudo cp proxy-cli /usr/local/bin/
+wget https://github.com/geek0ne/proxyman/releases/latest/download/proxyman-linux-amd64.tar.gz
+tar -xzf proxyman-linux-amd64.tar.gz
+chmod +x proxyman
+sudo cp proxyman /usr/local/bin/
 ```
 
 ## 🚀 快速开始
@@ -59,10 +62,10 @@ sudo cp proxy-cli /usr/local/bin/
 
 ```bash
 # 安装 Xray-core (V2Ray)
-proxy-cli install v2ray
+proxyman install v2ray
 
 # 安装 Mihomo (Clash Meta)
-proxy-cli install clash
+proxyman install clash
 ```
 
 ### 2. 配置代理服务器
@@ -71,42 +74,42 @@ proxy-cli install clash
 
 ```bash
 # 编辑 Xray 配置
-proxy-cli config edit v2ray
+proxyman config edit v2ray
 # 或直接编辑配置文件
-vim ~/.config/proxy-cli/engines/v2ray/config.json
+vim ~/.config/proxyman/engines/v2ray/config.json
 
 # 编辑 Mihomo 配置
-proxy-cli config edit clash
+proxyman config edit clash
 # 或直接编辑配置文件
-vim ~/.config/proxy-cli/engines/clash/config.yaml
+vim ~/.config/proxyman/engines/clash/config.yaml
 ```
 
 ### 3. 启动代理
 
 ```bash
 # 启动 Xray
-proxy-cli start v2ray ~/.config/proxy-cli/engines/v2ray/config.json
+proxyman start v2ray ~/.config/proxyman/engines/v2ray/config.json
 
 # 启动 Mihomo
-proxy-cli start clash ~/.config/proxy-cli/engines/clash/config.yaml
+proxyman start clash ~/.config/proxyman/engines/clash/config.yaml
 ```
 
 ### 4. 开启系统代理
 
 ```bash
-proxy-cli system-proxy enable
+proxyman system-proxy enable
 ```
 
 ### 5. 安装为 systemd 服务（可选）
 
 ```bash
 # 安装 Xray 服务
-sudo cp ~/.config/proxy-cli/engines/v2ray/proxy-cli-xray.service /etc/systemd/system/
-sudo systemctl enable --now proxy-cli-xray
+sudo cp ~/.config/proxyman/engines/v2ray/proxyman-xray.service /etc/systemd/system/
+sudo systemctl enable --now proxyman-xray
 
 # 安装 Mihomo 服务
-sudo cp ~/.config/proxy-cli/engines/clash/proxy-cli-mihomo.service /etc/systemd/system/
-sudo systemctl enable --now proxy-cli-mihomo
+sudo cp ~/.config/proxyman/engines/clash/proxyman-mihomo.service /etc/systemd/system/
+sudo systemctl enable --now proxyman-mihomo
 ```
 
 ## 📚 命令参考
@@ -115,58 +118,58 @@ sudo systemctl enable --now proxy-cli-mihomo
 
 | 命令 | 说明 |
 |------|------|
-| `proxy-cli install <v2ray\|clash>` | 安装引擎 |
-| `proxy-cli uninstall <v2ray\|clash>` | 卸载引擎 |
-| `proxy-cli start <engine> <config>` | 启动引擎 |
-| `proxy-cli stop <engine>` | 停止引擎 |
-| `proxy-cli status` | 查看引擎状态 |
+| `proxyman install <v2ray\|clash>` | 安装引擎 |
+| `proxyman uninstall <v2ray\|clash>` | 卸载引擎 |
+| `proxyman start <engine> <config>` | 启动引擎 |
+| `proxyman stop <engine>` | 停止引擎 |
+| `proxyman status` | 查看引擎状态 |
 
 ### 配置管理
 
 | 命令 | 说明 |
 |------|------|
-| `proxy-cli config show` | 查看当前配置 |
-| `proxy-cli config set <key> <value>` | 设置配置项 |
-| `proxy-cli config edit <engine>` | 编辑配置文件 |
+| `proxyman config show` | 查看当前配置 |
+| `proxyman config set <key> <value>` | 设置配置项 |
+| `proxyman config edit <engine>` | 编辑配置文件 |
 
 ### 流量分流
 
 | 命令 | 说明 |
 |------|------|
-| `proxy-cli split <engine> full` | 全代理模式 |
-| `proxy-cli split <engine> china-split` | 国内直连模式 |
+| `proxyman split <engine> full` | 全代理模式 |
+| `proxyman split <engine> china-split` | 国内直连模式 |
 
 ### 系统代理
 
 | 命令 | 说明 |
 |------|------|
-| `proxy-cli system-proxy enable` | 开启系统代理 |
-| `proxy-cli system-proxy disable` | 关闭系统代理 |
-| `proxy-cli system-proxy status` | 查看代理状态 |
+| `proxyman system-proxy enable` | 开启系统代理 |
+| `proxyman system-proxy disable` | 关闭系统代理 |
+| `proxyman system-proxy status` | 查看代理状态 |
 
 ### 测试
 
 | 命令 | 说明 |
 |------|------|
-| `proxy-cli test <engine>` | 测试引擎配置 |
+| `proxyman test <engine>` | 测试引擎配置 |
 
 ## 📁 配置文件
 
 ### 目录结构
 
 ```
-~/.config/proxy-cli/
+~/.config/proxyman/
 ├── engines/
 │   ├── v2ray/
 │   │   ├── xray                    # Xray 二进制
 │   │   ├── config.json             # Xray 配置
 │   │   ├── geoip.dat               # GeoIP 数据库
 │   │   ├── geosite.dat             # GeoSite 数据库
-│   │   └── proxy-cli-xray.service  # systemd 服务
+│   │   └── proxyman-xray.service  # systemd 服务
 │   └── clash/
 │       ├── mihomo                  # Mihomo 二进制
 │       ├── config.yaml             # Mihomo 配置
-│       └── proxy-cli-mihomo.service # systemd 服务
+│       └── proxyman-mihomo.service # systemd 服务
 ```
 
 ### Xray 配置示例 (config.json)
@@ -246,10 +249,10 @@ rules:
 
 ```bash
 # 国内直连模式（推荐）
-proxy-cli split clash china-split
+proxyman split clash china-split
 
 # 全代理模式
-proxy-cli split clash full
+proxyman split clash full
 ```
 
 ### 分流规则说明
@@ -301,11 +304,11 @@ proxy-cli split clash full
 
 ```bash
 # 使用镜像加速（自动）
-proxy-cli install v2ray
+proxyman install v2ray
 
 # 或手动设置代理
 export https_proxy=http://127.0.0.1:7890
-proxy-cli install v2ray
+proxyman install v2ray
 ```
 
 ### 端口冲突
@@ -315,15 +318,15 @@ proxy-cli install v2ray
 ss -tlnp | grep -E '10808|10809|7890'
 
 # 修改配置文件中的端口
-proxy-cli config edit v2ray
+proxyman config edit v2ray
 ```
 
 ### 权限问题
 
 ```bash
 # 确保二进制有执行权限
-chmod +x ~/.config/proxy-cli/engines/v2ray/xray
-chmod +x ~/.config/proxy-cli/engines/clash/mihomo
+chmod +x ~/.config/proxyman/engines/v2ray/xray
+chmod +x ~/.config/proxyman/engines/clash/mihomo
 ```
 
 ## 📊 系统要求
@@ -356,8 +359,8 @@ chmod +x ~/.config/proxy-cli/engines/clash/mihomo
 
 ## 📞 联系方式
 
-- Issues：[GitHub Issues](https://github.com/yourusername/proxy-cli/issues)
-- Email：your.email@example.com
+- Issues：[GitHub Issues](https://github.com/geek0ne/proxyman/issues)
+- Email：nzl9100@gmail.com
 
 ---
 

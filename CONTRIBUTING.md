@@ -1,6 +1,6 @@
-# Contributing to proxy-cli
+# Contributing to proxyman
 
-Thank you for your interest in contributing to proxy-cli! This document provides guidelines and information for contributors.
+Thank you for your interest in contributing to proxyman! This document provides guidelines and information for contributors.
 
 ## 📋 Table of Contents
 
@@ -16,7 +16,7 @@ Thank you for your interest in contributing to proxy-cli! This document provides
 
 ## 📜 Code of Conduct
 
-This project and everyone participating in it is governed by our Code of Conduct. By participating, you are expected to uphold this code. Please report unacceptable behavior to [your.email@example.com](mailto:your.email@example.com).
+This project and everyone participating in it is governed by our Code of Conduct. By participating, you are expected to uphold this code. Please report unacceptable behavior to [nzl9100@gmail.com](mailto:nzl9100@gmail.com).
 
 ## 🚀 Getting Started
 
@@ -31,13 +31,13 @@ This project and everyone participating in it is governed by our Code of Conduct
 1. Fork the repository on GitHub
 2. Clone your fork locally:
    ```bash
-   git clone https://github.com/yourusername/proxy-cli.git
-   cd proxy-cli
+   git clone https://github.com/geek0ne/proxyman.git
+   cd proxyman
    ```
 
 3. Add upstream remote:
    ```bash
-   git remote add upstream https://github.com/originalusername/proxy-cli.git
+   git remote add upstream https://github.com/originalusername/proxyman.git
    ```
 
 ## 🛠️ Development Environment
@@ -64,7 +64,7 @@ make lint
 ### Project Structure
 
 ```
-proxy-cli/
+proxyman/
 ├── main.go                    # Entry point
 ├── go.mod                     # Go module definition
 ├── Makefile                   # Build automation
@@ -75,7 +75,7 @@ proxy-cli/
 ├── .gitignore               # Git ignore rules
 └── internal/
     ├── cmd/
-    │   ├── proxy-cli.go      # CLI entry point
+    │   ├── proxyman.go      # CLI entry point
     │   └── commands.go       # Command implementations
     ├── config/
     │   ├── config.go         # Configuration management
@@ -285,9 +285,9 @@ Contributors will be recognized in:
 
 ## 📞 Contact
 
-- Email: your.email@example.com
-- GitHub Issues: [proxy-cli Issues](https://github.com/yourusername/proxy-cli/issues)
+- Email: nzl9100@gmail.com
+- GitHub Issues: [proxyman Issues](https://github.com/geek0ne/proxyman/issues)
 
 ---
 
-Thank you for contributing to proxy-cli! 🎉
+Thank you for contributing to proxyman! 🎉

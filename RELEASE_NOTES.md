@@ -1,8 +1,8 @@
-# proxy-cli v1.0.0 Release Notes
+# proxyman v1.0.0 Release Notes
 
 ## 🎉 首个稳定版本发布
 
-**proxy-cli** 是一个一站式 Linux 网络代理 CLI 工具，统一管理 Xray (V2Ray) 和 Mihomo (Clash Meta)。
+**proxyman** 是一个一站式 Linux 网络代理 CLI 工具，统一管理 Xray (V2Ray) 和 Mihomo (Clash Meta)。
 
 ---
 
@@ -73,13 +73,13 @@
 
 ### 方式一：一键安装脚本
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yourusername/proxy-cli/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/geek0ne/proxyman/main/install.sh | bash
 ```
 
 ### 方式二：Git Clone
 ```bash
-git clone https://github.com/yourusername/proxy-cli.git
-cd proxy-cli
+git clone https://github.com/geek0ne/proxyman.git
+cd proxyman
 make build
 sudo make install
 ```
@@ -87,14 +87,14 @@ sudo make install
 ### 方式三：直接下载
 ```bash
 # 下载
-wget https://github.com/yourusername/proxy-cli/releases/download/v1.0.0/proxy-cli-1.0.0-linux-amd64.tar.gz
+wget https://github.com/geek0ne/proxyman/releases/download/v1.0.0/proxyman-1.0.0-linux-amd64.tar.gz
 
 # 解压
-tar -xzf proxy-cli-1.0.0-linux-amd64.tar.gz
+tar -xzf proxyman-1.0.0-linux-amd64.tar.gz
 
 # 安装
-chmod +x proxy-cli-linux-amd64
-sudo cp proxy-cli-linux-amd64 /usr/local/bin/proxy-cli
+chmod +x proxyman-linux-amd64
+sudo cp proxyman-linux-amd64 /usr/local/bin/proxyman
 ```
 
 ---
@@ -103,36 +103,36 @@ sudo cp proxy-cli-linux-amd64 /usr/local/bin/proxy-cli
 
 ### 1. 安装引擎
 ```bash
-proxy-cli install v2ray
-proxy-cli install clash
+proxyman install v2ray
+proxyman install clash
 ```
 
 ### 2. 导入机场订阅
 ```bash
-proxy-cli import "https://your-airport.com/sub?token=xxx"
+proxyman import "https://your-airport.com/sub?token=xxx"
 ```
 
 ### 3. 导入代理链接
 ```bash
-proxy-cli import "vmess://eyJ2IjoiMiIs..."
-proxy-cli import "vless://uuid@server:port?security=tls#name"
+proxyman import "vmess://eyJ2IjoiMiIs..."
+proxyman import "vless://uuid@server:port?security=tls#name"
 ```
 
 ### 4. 配置分流模式
 ```bash
-proxy-cli split clash china-split   # 国内直连模式
-proxy-cli split clash full          # 全代理模式
+proxyman split clash china-split   # 国内直连模式
+proxyman split clash full          # 全代理模式
 ```
 
 ### 5. 启动代理
 ```bash
-proxy-cli start v2ray ~/.config/proxy-cli/engines/v2ray/config.json
-proxy-cli start clash ~/.config/proxy-cli/engines/clash/config.yaml
+proxyman start v2ray ~/.config/proxyman/engines/v2ray/config.json
+proxyman start clash ~/.config/proxyman/engines/clash/config.yaml
 ```
 
 ### 6. 开启系统代理
 ```bash
-proxy-cli system-proxy enable
+proxyman system-proxy enable
 ```
 
 ---
@@ -141,25 +141,25 @@ proxy-cli system-proxy enable
 
 | 命令 | 说明 |
 |------|------|
-| `proxy-cli install <v2ray\|clash>` | 安装引擎 |
-| `proxy-cli uninstall <v2ray\|clash>` | 卸载引擎 |
-| `proxy-cli start <engine> <config>` | 启动引擎 |
-| `proxy-cli stop <engine>` | 停止引擎 |
-| `proxy-cli status` | 查看引擎状态 |
-| `proxy-cli config show` | 查看配置 |
-| `proxy-cli config set <key> <value>` | 设置配置 |
-| `proxy-cli config edit <engine>` | 编辑配置文件 |
-| `proxy-cli split <engine> <mode>` | 分流模式 |
-| `proxy-cli test <engine>` | 测试连接 |
-| `proxy-cli import <link>` | 导入代理链接 |
-| `proxy-cli system-proxy enable/disable/status` | 系统代理 |
+| `proxyman install <v2ray\|clash>` | 安装引擎 |
+| `proxyman uninstall <v2ray\|clash>` | 卸载引擎 |
+| `proxyman start <engine> <config>` | 启动引擎 |
+| `proxyman stop <engine>` | 停止引擎 |
+| `proxyman status` | 查看引擎状态 |
+| `proxyman config show` | 查看配置 |
+| `proxyman config set <key> <value>` | 设置配置 |
+| `proxyman config edit <engine>` | 编辑配置文件 |
+| `proxyman split <engine> <mode>` | 分流模式 |
+| `proxyman test <engine>` | 测试连接 |
+| `proxyman import <link>` | 导入代理链接 |
+| `proxyman system-proxy enable/disable/status` | 系统代理 |
 
 ---
 
 ## 📁 文件结构
 
 ```
-proxy-cli/
+proxyman/
 ├── README.md                  # 项目文档
 ├── LICENSE                    # MIT 许可证
 ├── CHANGELOG.md              # 版本历史
@@ -196,8 +196,8 @@ proxy-cli/
 
 ## 📞 反馈
 
-- Issues: [GitHub Issues](https://github.com/yourusername/proxy-cli/issues)
-- Email: your.email@example.com
+- Issues: [GitHub Issues](https://github.com/geek0ne/proxyman/issues)
+- Email: nzl9100@gmail.com
 
 ---
 

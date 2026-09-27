@@ -1,7 +1,7 @@
 .PHONY: build clean test install uninstall
 
 # 项目信息
-APP_NAME := proxy-cli
+APP_NAME := proxyman
 VERSION := 1.0.0
 BUILD_TIME := $(shell date -u '+%Y-%m-%d_%H:%M:%S')
 GO_VERSION := $(shell go version | cut -d " " -f 3)

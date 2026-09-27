@@ -1,4 +1,4 @@
-module github.com/proxy-cli/proxy-cli
+module github.com/proxyman/proxyman
 
 go 1.26
 

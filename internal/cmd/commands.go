@@ -6,9 +6,9 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/proxy-cli/proxy-cli/internal/config"
-	"github.com/proxy-cli/proxy-cli/internal/engine"
-	"github.com/proxy-cli/proxy-cli/internal/parser"
+	"github.com/proxyman/proxyman/internal/config"
+	"github.com/proxyman/proxyman/internal/engine"
+	"github.com/proxyman/proxyman/internal/parser"
 	"github.com/spf13/cobra"
 )
 
@@ -114,7 +114,7 @@ var statusCmd = &cobra.Command{
 // ==================== config ====================
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "Manage proxy-cli configuration",
+	Short: "Manage proxyman configuration",
 }
 
 var configShowCmd = &cobra.Command{
@@ -170,7 +170,7 @@ var configEditCmd = &cobra.Command{
 		em := engine.NewManager(cfg)
 		configPath := em.GetConfigPath(engineName)
 		if configPath == "" {
-			return fmt.Errorf("no config found for %s. Run 'proxy-cli install %s' first", engineName, engineName)
+			return fmt.Errorf("no config found for %s. Run 'proxyman install %s' first", engineName, engineName)
 		}
 		editor := os.Getenv("EDITOR")
 		if editor == "" {
@@ -274,9 +274,9 @@ var importCmd = &cobra.Command{
   - Subscription URLs (airport links)
 
 Examples:
-  proxy-cli import "vmess://eyJ2IjoiMiIs..."
-  proxy-cli import "vless://uuid@server:port?security=tls#name"
-  proxy-cli import "https://example.com/sub?token=xxx"`,
+  proxyman import "vmess://eyJ2IjoiMiIs..."
+  proxyman import "vless://uuid@server:port?security=tls#name"
+  proxyman import "https://example.com/sub?token=xxx"`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		input := args[0]

@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Config holds the proxy-cli configuration
+// Config holds the proxyman configuration
 type Config struct {
 	WorkDir     string `mapstructure:"workdir"`
 	LogLevel    string `mapstructure:"loglevel"`
@@ -22,7 +22,7 @@ type Config struct {
 func DefaultConfig() *Config {
 	home, _ := os.UserHomeDir()
 	return &Config{
-		WorkDir:     filepath.Join(home, ".config", "proxy-cli"),
+		WorkDir:     filepath.Join(home, ".config", "proxyman"),
 		LogLevel:    "info",
 		IPv6:        false,
 		SystemProxy: false,
@@ -69,12 +69,12 @@ func SaveConfig(cfg *Config) error {
 	viper.Set("clash_url", cfg.ClashURL)
 
 	home, _ := os.UserHomeDir()
-	configPath := filepath.Join(home, ".config", "proxy-cli")
+	configPath := filepath.Join(home, ".config", "proxyman")
 	os.MkdirAll(configPath, 0755)
 
 	if err := viper.WriteConfig(); err != nil {
 		// If config file doesn't exist, create it
-		if err := viper.WriteConfigAs(filepath.Join(configPath, ".proxy-cli.yaml")); err != nil {
+		if err := viper.WriteConfigAs(filepath.Join(configPath, ".proxyman.yaml")); err != nil {
 			return fmt.Errorf("write config: %w", err)
 		}
 	}

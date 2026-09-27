@@ -1,5 +1,5 @@
 # Binaries
-proxy-cli
+proxyman
 *.exe
 *.exe~
 *.dll
@@ -38,5 +38,16 @@ Thumbs.db
 *.sock
 
 # Build artifacts
-proxy-cli-linux-amd64
+proxyman-linux-amd64
 dist/
+
+# Backup files
+*.bak
+*.orig
+*.rej
+
+# Release staging
+/release/
+
+# Local runtime
+/.proxyman.yaml

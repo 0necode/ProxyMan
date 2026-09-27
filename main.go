@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/proxy-cli/proxy-cli/internal/cmd"
+	"github.com/proxyman/proxyman/internal/cmd"
 	"os"
 )
 
