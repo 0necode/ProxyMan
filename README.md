@@ -1,4 +1,4 @@
-# proxyman
+# ProxyMan
 
 > **One binary to rule them all — manage Xray and Mihomo, every protocol, one command.**
 > 一个二进制，管好双引擎。全协议，一条命令。
@@ -9,15 +9,36 @@
 
 ## 📖 简介
 
-**proxyman** 是一个面向 Linux 的统一代理命令行工具，用单个静态二进制同时管理 **Xray-core** 与 **Mihomo (Clash Meta)** 两大内核。它覆盖 VMess、VLESS、Reality、gRPC、Trojan、Shadowsocks 2022、AnyTLS、TUIC、Hysteria2 等主流协议，内置订阅链接解析与 GeoIP/GeoSite 智能分流，并提供系统代理开关与 systemd 服务集成——安装、配置、启动、开机自启，全部在终端内完成。
+**ProxyMan** 是一个面向 Linux 的统一代理命令行工具，用单个静态二进制同时管理 **Xray-core** 与 **Mihomo (Clash Meta)** 两大内核。它覆盖 VMess、VLESS、Reality、gRPC、Trojan、Shadowsocks 2022、AnyTLS、TUIC、Hysteria2 等主流协议，内置订阅链接解析与 GeoIP/GeoSite 智能分流，并提供系统代理开关与 systemd 服务集成——安装、配置、启动、开机自启，全部在终端内完成。
 
 > 统管 Xray 与 Mihomo 双内核的全协议 Linux 代理 CLI。
 
 ### ✨ 核心特性
 
 - **全协议支持**
-  - V2Ray 系列：VMess, VLess, VLess+Reality, VLess+gRPC, Trojan, Trojan+gRPC, Shadowsocks, Shadowsocks-2022, AnyTLS, SOCKS, HTTP
-  - Clash 系列：VMess, VLess, Trojan, Shadowsocks, HTTP/HTTPS, SOCKS5, Tuic, Hysteria, Hysteria2, AnyTLS
+  - V2Ray / Xray 系列
+    - VMess
+    - VLESS
+    - VLESS + Reality
+    - VLESS + gRPC
+    - Trojan
+    - Trojan + gRPC
+    - Shadowsocks
+    - Shadowsocks-2022
+    - AnyTLS
+    - SOCKS5
+    - HTTP
+  - Clash / Mihomo 系列
+    - VMess
+    - VLESS
+    - Trojan
+    - Shadowsocks
+    - HTTP / HTTPS
+    - SOCKS5
+    - TUIC
+    - Hysteria
+    - Hysteria2
+    - AnyTLS
 
 - **智能分流**
   - 🇨🇳 国内直连：GEOIP/CN 规则自动直连
@@ -36,24 +57,24 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/geek0ne/proxyman.git
-cd proxyman
+git clone https://github.com/geek0ne/ProxyMan.git
+cd ProxyMan
 
 # 编译
-go build -o proxyman .
+go build -o ProxyMan .
 
 # 安装到系统路径（可选）
-sudo cp proxyman /usr/local/bin/
+sudo cp ProxyMan /usr/local/bin/
 ```
 
 ### 直接下载
 
 ```bash
 # 下载预编译二进制（Linux amd64）
-wget https://github.com/geek0ne/proxyman/releases/latest/download/proxyman-linux-amd64.tar.gz
-tar -xzf proxyman-linux-amd64.tar.gz
-chmod +x proxyman
-sudo cp proxyman /usr/local/bin/
+wget https://github.com/geek0ne/ProxyMan/releases/latest/download/ProxyMan-linux-amd64.tar.gz
+tar -xzf ProxyMan-linux-amd64.tar.gz
+chmod +x ProxyMan
+sudo cp ProxyMan /usr/local/bin/
 ```
 
 ## 🚀 快速开始
@@ -62,10 +83,10 @@ sudo cp proxyman /usr/local/bin/
 
 ```bash
 # 安装 Xray-core (V2Ray)
-proxyman install v2ray
+ProxyMan install v2ray
 
 # 安装 Mihomo (Clash Meta)
-proxyman install clash
+ProxyMan install clash
 ```
 
 ### 2. 配置代理服务器
@@ -74,42 +95,42 @@ proxyman install clash
 
 ```bash
 # 编辑 Xray 配置
-proxyman config edit v2ray
+ProxyMan config edit v2ray
 # 或直接编辑配置文件
-vim ~/.config/proxyman/engines/v2ray/config.json
+vim ~/.config/ProxyMan/engines/v2ray/config.json
 
 # 编辑 Mihomo 配置
-proxyman config edit clash
+ProxyMan config edit clash
 # 或直接编辑配置文件
-vim ~/.config/proxyman/engines/clash/config.yaml
+vim ~/.config/ProxyMan/engines/clash/config.yaml
 ```
 
 ### 3. 启动代理
 
 ```bash
 # 启动 Xray
-proxyman start v2ray ~/.config/proxyman/engines/v2ray/config.json
+ProxyMan start v2ray ~/.config/ProxyMan/engines/v2ray/config.json
 
 # 启动 Mihomo
-proxyman start clash ~/.config/proxyman/engines/clash/config.yaml
+ProxyMan start clash ~/.config/ProxyMan/engines/clash/config.yaml
 ```
 
 ### 4. 开启系统代理
 
 ```bash
-proxyman system-proxy enable
+ProxyMan system-proxy enable
 ```
 
 ### 5. 安装为 systemd 服务（可选）
 
 ```bash
 # 安装 Xray 服务
-sudo cp ~/.config/proxyman/engines/v2ray/proxyman-xray.service /etc/systemd/system/
-sudo systemctl enable --now proxyman-xray
+sudo cp ~/.config/ProxyMan/engines/v2ray/ProxyMan-xray.service /etc/systemd/system/
+sudo systemctl enable --now ProxyMan-xray
 
 # 安装 Mihomo 服务
-sudo cp ~/.config/proxyman/engines/clash/proxyman-mihomo.service /etc/systemd/system/
-sudo systemctl enable --now proxyman-mihomo
+sudo cp ~/.config/ProxyMan/engines/clash/ProxyMan-mihomo.service /etc/systemd/system/
+sudo systemctl enable --now ProxyMan-mihomo
 ```
 
 ## 📚 命令参考
@@ -118,58 +139,58 @@ sudo systemctl enable --now proxyman-mihomo
 
 | 命令 | 说明 |
 |------|------|
-| `proxyman install <v2ray\|clash>` | 安装引擎 |
-| `proxyman uninstall <v2ray\|clash>` | 卸载引擎 |
-| `proxyman start <engine> <config>` | 启动引擎 |
-| `proxyman stop <engine>` | 停止引擎 |
-| `proxyman status` | 查看引擎状态 |
+| `ProxyMan install <v2ray\|clash>` | 安装引擎 |
+| `ProxyMan uninstall <v2ray\|clash>` | 卸载引擎 |
+| `ProxyMan start <engine> <config>` | 启动引擎 |
+| `ProxyMan stop <engine>` | 停止引擎 |
+| `ProxyMan status` | 查看引擎状态 |
 
 ### 配置管理
 
 | 命令 | 说明 |
 |------|------|
-| `proxyman config show` | 查看当前配置 |
-| `proxyman config set <key> <value>` | 设置配置项 |
-| `proxyman config edit <engine>` | 编辑配置文件 |
+| `ProxyMan config show` | 查看当前配置 |
+| `ProxyMan config set <key> <value>` | 设置配置项 |
+| `ProxyMan config edit <engine>` | 编辑配置文件 |
 
 ### 流量分流
 
 | 命令 | 说明 |
 |------|------|
-| `proxyman split <engine> full` | 全代理模式 |
-| `proxyman split <engine> china-split` | 国内直连模式 |
+| `ProxyMan split <engine> full` | 全代理模式 |
+| `ProxyMan split <engine> china-split` | 国内直连模式 |
 
 ### 系统代理
 
 | 命令 | 说明 |
 |------|------|
-| `proxyman system-proxy enable` | 开启系统代理 |
-| `proxyman system-proxy disable` | 关闭系统代理 |
-| `proxyman system-proxy status` | 查看代理状态 |
+| `ProxyMan system-proxy enable` | 开启系统代理 |
+| `ProxyMan system-proxy disable` | 关闭系统代理 |
+| `ProxyMan system-proxy status` | 查看代理状态 |
 
 ### 测试
 
 | 命令 | 说明 |
 |------|------|
-| `proxyman test <engine>` | 测试引擎配置 |
+| `ProxyMan test <engine>` | 测试引擎配置 |
 
 ## 📁 配置文件
 
 ### 目录结构
 
 ```
-~/.config/proxyman/
+~/.config/ProxyMan/
 ├── engines/
 │   ├── v2ray/
 │   │   ├── xray                    # Xray 二进制
 │   │   ├── config.json             # Xray 配置
 │   │   ├── geoip.dat               # GeoIP 数据库
 │   │   ├── geosite.dat             # GeoSite 数据库
-│   │   └── proxyman-xray.service  # systemd 服务
+│   │   └── ProxyMan-xray.service  # systemd 服务
 │   └── clash/
 │       ├── mihomo                  # Mihomo 二进制
 │       ├── config.yaml             # Mihomo 配置
-│       └── proxyman-mihomo.service # systemd 服务
+│       └── ProxyMan-mihomo.service # systemd 服务
 ```
 
 ### Xray 配置示例 (config.json)
@@ -249,10 +270,10 @@ rules:
 
 ```bash
 # 国内直连模式（推荐）
-proxyman split clash china-split
+ProxyMan split clash china-split
 
 # 全代理模式
-proxyman split clash full
+ProxyMan split clash full
 ```
 
 ### 分流规则说明
@@ -304,11 +325,11 @@ proxyman split clash full
 
 ```bash
 # 使用镜像加速（自动）
-proxyman install v2ray
+ProxyMan install v2ray
 
 # 或手动设置代理
 export https_proxy=http://127.0.0.1:7890
-proxyman install v2ray
+ProxyMan install v2ray
 ```
 
 ### 端口冲突
@@ -318,15 +339,15 @@ proxyman install v2ray
 ss -tlnp | grep -E '10808|10809|7890'
 
 # 修改配置文件中的端口
-proxyman config edit v2ray
+ProxyMan config edit v2ray
 ```
 
 ### 权限问题
 
 ```bash
 # 确保二进制有执行权限
-chmod +x ~/.config/proxyman/engines/v2ray/xray
-chmod +x ~/.config/proxyman/engines/clash/mihomo
+chmod +x ~/.config/ProxyMan/engines/v2ray/xray
+chmod +x ~/.config/ProxyMan/engines/clash/mihomo
 ```
 
 ## 📊 系统要求
@@ -359,7 +380,7 @@ chmod +x ~/.config/proxyman/engines/clash/mihomo
 
 ## 📞 联系方式
 
-- Issues：[GitHub Issues](https://github.com/geek0ne/proxyman/issues)
+- Issues：[GitHub Issues](https://github.com/geek0ne/ProxyMan/issues)
 - Email：nzl9100@gmail.com
 
 ---
