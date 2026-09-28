@@ -108,7 +108,7 @@ const XrayShadowsocksConfig = `{
 
 // MihomoFullConfig 支持全协议 + 自动分流
 const MihomoFullConfig = `# ============================================
-# proxyman Mihomo 全协议配置
+# ProxyMan Mihomo 全协议配置
 # 支持: VMess, VLess, Trojan, Shadowsocks,
 #       HTTP/HTTPS, SOCKS5, Tuic, Hysteria2
 # ============================================
@@ -296,7 +296,7 @@ rules:
 
 // MihomoChinaSplitConfig 专注国内直连分流
 const MihomoChinaSplitConfig = `# ============================================
-# proxyman 国内直连分流配置
+# ProxyMan 国内直连分流配置
 # 特点: 国内流量直连, 国际流量走代理
 # ============================================
 
@@ -503,7 +503,7 @@ func WriteSystemdService(engineDir, binaryName, configName, description string) 
 		return "", fmt.Errorf("parse systemd template: %w", err)
 	}
 
-	serviceName := fmt.Sprintf("proxyman-%s.service", binaryName)
+	serviceName := fmt.Sprintf("ProxyMan-%s.service", binaryName)
 	servicePath := filepath.Join(engineDir, serviceName)
 	f, err := os.Create(servicePath)
 	if err != nil {
@@ -520,7 +520,7 @@ func WriteSystemdService(engineDir, binaryName, configName, description string) 
 // WriteTProxyService 生成 TProxy 透明代理 systemd 服务
 func WriteTProxyService(engineDir, binaryName, configName string) (string, error) {
 	tproxyService := `[Unit]
-Description=proxyman TProxy Transparent Proxy
+Description=ProxyMan TProxy Transparent Proxy
 After=network.target
 
 [Service]
@@ -549,7 +549,7 @@ AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW
 [Install]
 WantedBy=multi-user.target
 `
-	servicePath := filepath.Join(engineDir, "proxyman-tproxy.service")
+	servicePath := filepath.Join(engineDir, "ProxyMan-tproxy.service")
 	f, err := os.Create(servicePath)
 	if err != nil {
 		return "", fmt.Errorf("create tproxy service: %w", err)
@@ -692,7 +692,7 @@ const XrayAnyTLSConfig = `{
 
 // MihomoAnyTLSConfig 支持 AnyTLS 协议
 const MihomoAnyTLSConfig = `# ============================================
-# proxyman Mihomo AnyTLS 配置
+# ProxyMan Mihomo AnyTLS 配置
 # ============================================
 
 mixed-port: 7890
@@ -737,7 +737,7 @@ rules:
 
 // MihomoHysteriaConfig 支持 Hysteria 协议
 const MihomoHysteriaConfig = `# ============================================
-# proxyman Mihomo Hysteria 配置
+# ProxyMan Mihomo Hysteria 配置
 # ============================================
 
 mixed-port: 7890
@@ -784,7 +784,7 @@ rules:
 
 // MihomoTuicConfig 支持 Tuic 协议
 const MihomoTuicConfig = `# ============================================
-# proxyman Mihomo Tuic 配置
+# ProxyMan Mihomo Tuic 配置
 # ============================================
 
 mixed-port: 7890

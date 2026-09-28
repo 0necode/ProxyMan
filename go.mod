@@ -1,4 +1,4 @@
-module github.com/proxyman/proxyman
+module github.com/Geek0ne/ProxyMan
 
 go 1.26
 

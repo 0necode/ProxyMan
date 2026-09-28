@@ -16,9 +16,9 @@ var (
 
 // rootCmd is the base command
 var rootCmd = &cobra.Command{
-	Use:   "proxyman",
+	Use:   "ProxyMan",
 	Short: "A unified proxy CLI for Linux — V2Ray & Clash protocols",
-	Long: `proxyman is a unified proxy CLI that manages V2Ray and Clash protocols
+	Long: `ProxyMan is a unified proxy CLI that manages V2Ray and Clash protocols
 on Linux, enabling local system access to the internet.
 
 Supports: V2Ray (vmess, vless, vless-reality, vless-grpc, trojan, trojan-grpc, ss, ss2022, anytls, socks, http)
@@ -37,7 +37,7 @@ func init() {
 	rootCmd.SetVersionTemplate("{{.Version}}\n")
 
 	// Global flags
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.proxyman.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ProxyMan.yaml)")
 	rootCmd.Flags().BoolP("verbose", "v", false, "verbose output")
 
 	// Subcommands are registered in commands.go
@@ -53,11 +53,11 @@ func initConfig() {
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
-		// Search config in home directory with name ".proxyman" (without extension)
-		viper.AddConfigPath(filepath.Join(home, ".config", "proxyman"))
+		// Search config in home directory with name ".ProxyMan" (without extension)
+		viper.AddConfigPath(filepath.Join(home, ".config", "ProxyMan"))
 		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".proxyman")
+		viper.SetConfigName(".ProxyMan")
 	}
 
 	viper.SetEnvPrefix("PROXYMAN")

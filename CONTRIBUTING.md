@@ -1,6 +1,6 @@
-# Contributing to proxyman
+# Contributing to ProxyMan
 
-Thank you for your interest in contributing to proxyman! This document provides guidelines and information for contributors.
+Thank you for your interest in contributing to ProxyMan! This document provides guidelines and information for contributors.
 
 ## 📋 Table of Contents
 
@@ -31,13 +31,13 @@ This project and everyone participating in it is governed by our Code of Conduct
 1. Fork the repository on GitHub
 2. Clone your fork locally:
    ```bash
-   git clone https://github.com/geek0ne/proxyman.git
-   cd proxyman
+   git clone https://github.com/geek0ne/ProxyMan.git
+   cd ProxyMan
    ```
 
 3. Add upstream remote:
    ```bash
-   git remote add upstream https://github.com/originalusername/proxyman.git
+   git remote add upstream https://github.com/originalusername/ProxyMan.git
    ```
 
 ## 🛠️ Development Environment
@@ -64,7 +64,7 @@ make lint
 ### Project Structure
 
 ```
-proxyman/
+ProxyMan/
 ├── main.go                    # Entry point
 ├── go.mod                     # Go module definition
 ├── Makefile                   # Build automation
@@ -75,7 +75,7 @@ proxyman/
 ├── .gitignore               # Git ignore rules
 └── internal/
     ├── cmd/
-    │   ├── proxyman.go      # CLI entry point
+    │   ├── ProxyMan.go      # CLI entry point
     │   └── commands.go       # Command implementations
     ├── config/
     │   ├── config.go         # Configuration management
@@ -286,8 +286,8 @@ Contributors will be recognized in:
 ## 📞 Contact
 
 - Email: nzl9100@gmail.com
-- GitHub Issues: [proxyman Issues](https://github.com/geek0ne/proxyman/issues)
+- GitHub Issues: [ProxyMan Issues](https://github.com/geek0ne/ProxyMan/issues)
 
 ---
 
-Thank you for contributing to proxyman! 🎉
+Thank you for contributing to ProxyMan! 🎉

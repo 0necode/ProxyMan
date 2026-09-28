@@ -1,5 +1,5 @@
 # Binaries
-proxyman
+ProxyMan
 *.exe
 *.exe~
 *.dll
@@ -38,7 +38,7 @@ Thumbs.db
 *.sock
 
 # Build artifacts
-proxyman-linux-amd64
+ProxyMan-linux-amd64
 dist/
 
 # Backup files
@@ -50,4 +50,4 @@ dist/
 /release/
 
 # Local runtime
-/.proxyman.yaml
+/.ProxyMan.yaml

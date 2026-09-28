@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/proxyman/proxyman/internal/config"
+	"github.com/Geek0ne/ProxyMan/internal/config"
 )
 
 // EngineState represents the state of a proxy engine
@@ -135,7 +135,7 @@ func (m *Manager) Start(engine, cfgFile string) error {
 	engineDir := filepath.Join(m.cfg.WorkDir, "engines", engine)
 
 	if _, err := os.Stat(engineDir); os.IsNotExist(err) {
-		return fmt.Errorf("%s is not installed. Run 'proxyman install %s' first", engine, engine)
+		return fmt.Errorf("%s is not installed. Run 'ProxyMan install %s' first", engine, engine)
 	}
 
 	var binary string
