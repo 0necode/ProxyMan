@@ -3,9 +3,9 @@
 > **One binary to rule them all — manage Xray and Mihomo, every protocol, one command.**
 > 一个二进制，管好双引擎。全协议，一条命令。
 
-[![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat&logo=go)](https://golang.org)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-Linux-lightgrey.svg)](https://github.com)
+[![Go](https://img.shields.io/badge/Go-1.26%2B-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://golang.org)
+[![License](https://img.shields.io/badge/License-MIT-FF6B35?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Linux-F7DF1E?style=for-the-badge&logo=linux&logoColor=white)](https://github.com)
 
 ## 📖 简介
 
