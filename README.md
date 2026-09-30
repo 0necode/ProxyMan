@@ -135,6 +135,18 @@ sudo systemctl enable --now ProxyMan-mihomo
 
 ## 📚 命令参考
 
+### 节点管理
+
+| 命令 | 说明 |
+|------|------|
+| `ProxyMan import <link> --store` | 导入节点并保存到本地节点库 |
+| `ProxyMan list` | 列出已保存的节点 |
+| `ProxyMan remove <name>` | 删除指定节点 |
+| `ProxyMan probe [name...]` | 测速（TCP 握手延迟），结果按速度排序 |
+| `ProxyMan apply <engine> [mode]` | 把节点库写入引擎配置 |
+
+`apply` 的 `mode` 可选 `full`（全流量走代理）或 `china-split`（国内直连、国际代理）。
+
 ### 引擎管理
 
 | 命令 | 说明 |
@@ -173,6 +185,20 @@ sudo systemctl enable --now ProxyMan-mihomo
 | 命令 | 说明 |
 |------|------|
 | `ProxyMan test <engine>` | 测试引擎配置 |
+
+### 日志
+
+| 命令 | 说明 |
+|------|------|
+| `ProxyMan log <engine>` | 查看引擎日志 |
+| `ProxyMan log <engine> -f` | 实时跟踪日志输出 |
+
+### 全局选项
+
+| 选项 | 说明 |
+|------|------|
+| `--dry-run` | 预演所有写操作，不实际落盘 |
+| `--config <path>` | 指定配置文件路径 |
 
 ## 📁 配置文件
 

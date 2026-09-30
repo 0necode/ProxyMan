@@ -8,9 +8,13 @@ import (
 
 	"github.com/Geek0ne/ProxyMan/internal/config"
 	"github.com/Geek0ne/ProxyMan/internal/engine"
+	nstore "github.com/Geek0ne/ProxyMan/internal/node"
 	"github.com/Geek0ne/ProxyMan/internal/parser"
 	"github.com/spf13/cobra"
 )
+
+// importStore makes 'import' persist parsed nodes instead of only printing them
+var importStore bool
 
 // ==================== install ====================
 var installCmd = &cobra.Command{
@@ -289,26 +293,67 @@ Examples:
 			if err != nil {
 				return fmt.Errorf("解析订阅失败: %w", err)
 			}
-			fmt.Printf("✓ 解析成功，共 %d 个节点\n\n", sub.Count)
-			for i, node := range sub.Proxies {
-				fmt.Printf("  %d. [%s] %s → %s:%d\n", i+1, node.Type, node.Name, node.Server, node.Port)
+			fmt.Printf("✓ 解析成功，共 %d 个节点\n", sub.Count)
+			for i, p := range sub.Proxies {
+				fmt.Printf("  %d. [%s] %s → %s:%d\n", i+1, p.Type, p.Name, p.Server, p.Port)
 			}
 
-		case "vmess", "vless", "trojan", "shadowsocks":
+			if importStore {
+				cfg := config.LoadConfig()
+				store := nstore.NewStore(cfg.WorkDir)
+				added := 0
+				for _, p := range sub.Proxies {
+					if store.Add(nstore.FromProxyNode(&p, "subscription")) {
+						added++
+					}
+				}
+				if dryRun {
+					fmt.Printf("\n[DRY RUN] would store %d new node(s) in %s\n", added, store.Path())
+					return nil
+				}
+				if err := store.Save(); err != nil {
+					return fmt.Errorf("保存节点失败: %w", err)
+				}
+				fmt.Printf("\n✓ 已保存 %d 个新节点（累计 %d）→ %s\n",
+					added, len(store.List()), store.Path())
+				fmt.Println("  下一步: ProxyMan list   然后   ProxyMan apply <engine>")
+			}
+
+		case "vmess", "vless", "trojan", "shadowsocks", "hysteria", "tuic", "anytls":
 			fmt.Printf("检测到 %s 协议链接\n", protocol)
-			node, err := parser.ParseProxyLink(input)
+			p, err := parser.ParseProxyLink(input)
 			if err != nil {
 				return fmt.Errorf("解析链接失败: %w", err)
 			}
 			fmt.Printf("✓ 解析成功\n")
-			fmt.Printf("  名称:   %s\n", node.Name)
-			fmt.Printf("  类型:   %s\n", node.Type)
-			fmt.Printf("  服务器: %s:%d\n", node.Server, node.Port)
-			if node.UUID != "" {
-				fmt.Printf("  UUID:   %s\n", node.UUID)
+			fmt.Printf("  名称:   %s\n", p.Name)
+			fmt.Printf("  类型:   %s\n", p.Type)
+			fmt.Printf("  服务器: %s:%d\n", p.Server, p.Port)
+			if p.UUID != "" {
+				fmt.Printf("  UUID:   %s\n", p.UUID)
 			}
-			if node.SNI != "" {
-				fmt.Printf("  SNI:    %s\n", node.SNI)
+			if p.SNI != "" {
+				fmt.Printf("  SNI:    %s\n", p.SNI)
+			}
+
+			if importStore {
+				cfg := config.LoadConfig()
+				store := nstore.NewStore(cfg.WorkDir)
+				isNew := store.Add(nstore.FromProxyNode(p, protocol))
+				if dryRun {
+					fmt.Printf("\n[DRY RUN] would store node %q into %s\n", p.Name, store.Path())
+					return nil
+				}
+				if err := store.Save(); err != nil {
+					return fmt.Errorf("保存节点失败: %w", err)
+				}
+				if isNew {
+					fmt.Printf("\n✓ 节点已保存: %s\n", p.Name)
+				} else {
+					fmt.Printf("\n✓ 节点已更新: %s\n", p.Name)
+				}
+				fmt.Printf("  存储位置: %s\n", store.Path())
+				fmt.Println("  下一步: ProxyMan list   然后   ProxyMan apply <engine>")
 			}
 
 		default:
@@ -356,6 +401,8 @@ var systemProxyCmd = &cobra.Command{
 }
 
 func init() {
+	importCmd.Flags().BoolVar(&importStore, "store", false, "persist parsed nodes to the local store")
+
 	configCmd.AddCommand(configShowCmd)
 	configCmd.AddCommand(configSetCmd)
 	configCmd.AddCommand(configEditCmd)
