@@ -1,5 +1,26 @@
 # Changelog
 
+## v1.1.0 — 2026-09-30
+
+### 新增
+
+- 节点库：`import --store` 持久化节点链接与订阅，重复导入自动更新
+- `list` 列出已保存节点，`remove <name>` 删除节点
+- `probe [name...]` 测量 TCP 握手延迟，按速度排序并缓存结果
+- `apply <engine> [mode]` 将节点库写入 Xray / Clash 配置，支持 `full` 与 `china-split`
+- `log <engine>` 查看引擎日志，`-f` 实时跟踪
+- `--dry-run` 全局预演开关，写操作不落盘
+
+### 修复
+
+- 修复节点库保存时的读写锁死锁
+- 修复 `apply --dry-run` 仍实际写盘的问题
+- `import` 支持协议由 4 种扩展至 7 种（新增 Hysteria、TUIC、AnyTLS）
+
+### 变更
+
+- 全量应用 gofmt
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),

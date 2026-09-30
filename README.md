@@ -2,6 +2,8 @@
 
 > **One binary to rule them all — manage Xray and Mihomo, every protocol, one command.**
 > 一个二进制，管好双引擎。全协议，一条命令。
+>
+> **当前版本 v1.1.0** — 新增节点库、测速、日志与 dry-run 预演
 
 [![Go](https://img.shields.io/badge/Go-1.26%2B-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://golang.org)
 [![License](https://img.shields.io/badge/License-MIT-FF6B35?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)

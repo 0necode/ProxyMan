@@ -2,7 +2,7 @@
 
 # 项目信息
 APP_NAME := ProxyMan
-VERSION := 1.0.0
+VERSION := 1.1.0
 BUILD_TIME := $(shell date -u '+%Y-%m-%d_%H:%M:%S')
 GO_VERSION := $(shell go version | cut -d " " -f 3)
 
