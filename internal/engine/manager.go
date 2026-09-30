@@ -32,7 +32,6 @@ type Config struct {
 	LogLevel string
 }
 
-
 // NewManager creates a new engine manager
 func NewManager(cfg *config.Config) *Manager {
 	return &Manager{

@@ -15,12 +15,12 @@ import (
 
 // EngineRelease holds metadata for downloading an engine binary from GitHub.
 type EngineRelease struct {
-	Name        string // human-readable name e.g. "Xray-core"
-	BinaryName  string // name of binary inside archive e.g. "xray"
-	ArchiveName string // archive file pattern e.g. "Xray-linux-64.zip"
-	Owner       string // GitHub owner
-	Repo        string // GitHub repo
-	IsZip       bool   // true for .zip, false for .tar.gz
+	Name        string                             // human-readable name e.g. "Xray-core"
+	BinaryName  string                             // name of binary inside archive e.g. "xray"
+	ArchiveName string                             // archive file pattern e.g. "Xray-linux-64.zip"
+	Owner       string                             // GitHub owner
+	Repo        string                             // GitHub repo
+	IsZip       bool                               // true for .zip, false for .tar.gz
 	PostExtract func(dir, binaryPath string) error // optional post-extraction hook
 }
 

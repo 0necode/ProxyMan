@@ -387,12 +387,12 @@ type ProxyConfigData struct {
 	SNI         string
 	Network     string
 	LogLevel    string
-	PublicKey   string  // Reality 协议
-	ShortId     string  // Reality 协议
-	SpiderX     string  // Reality 协议
-	GRPCService string  // gRPC 协议
-	WSPATH      string  // WebSocket 协议
-	Flow        string  // VLess XTLS flow
+	PublicKey   string // Reality 协议
+	ShortId     string // Reality 协议
+	SpiderX     string // Reality 协议
+	GRPCService string // gRPC 协议
+	WSPATH      string // WebSocket 协议
+	Flow        string // VLess XTLS flow
 }
 
 // WriteXrayConfig 根据协议生成 Xray 配置

@@ -12,22 +12,22 @@ import (
 
 // ProxyNode 代理节点配置
 type ProxyNode struct {
-	Name       string            `json:"name"`
-	Type       string            `json:"type"` // vmess, vless, trojan, ss, ss2022, anytls
-	Server     string            `json:"server"`
-	Port       int               `json:"port"`
-	UUID       string            `json:"uuid,omitempty"`
-	Password   string            `json:"password,omitempty"`
-	Cipher     string            `json:"cipher,omitempty"`
-	SNI        string            `json:"sni,omitempty"`
-	Network    string            `json:"network,omitempty"`
-	WSPATH     string            `json:"ws-path,omitempty"`
-	WSHost     string            `json:"ws-host,omitempty"`
-	TLS        bool              `json:"tls"`
-	Flow       string            `json:"flow,omitempty"`
-	Alpn       []string          `json:"alpn,omitempty"`
+	Name        string            `json:"name"`
+	Type        string            `json:"type"` // vmess, vless, trojan, ss, ss2022, anytls
+	Server      string            `json:"server"`
+	Port        int               `json:"port"`
+	UUID        string            `json:"uuid,omitempty"`
+	Password    string            `json:"password,omitempty"`
+	Cipher      string            `json:"cipher,omitempty"`
+	SNI         string            `json:"sni,omitempty"`
+	Network     string            `json:"network,omitempty"`
+	WSPATH      string            `json:"ws-path,omitempty"`
+	WSHost      string            `json:"ws-host,omitempty"`
+	TLS         bool              `json:"tls"`
+	Flow        string            `json:"flow,omitempty"`
+	Alpn        []string          `json:"alpn,omitempty"`
 	Fingerprint string            `json:"fingerprint,omitempty"`
-	Params     map[string]string `json:"params,omitempty"`
+	Params      map[string]string `json:"params,omitempty"`
 }
 
 // Subscription 订阅信息
